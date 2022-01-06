@@ -101,7 +101,7 @@ void KolorowanieDwochLedow(int ColorR, int ColorG, int ColorB, int NrLedStrip, i
   KolorowanieTylkoJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
 }
 
-KolorowanieAnimacjiDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
+void KolorowanieAnimacjiDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
   switch(NrLedStrip){
     case 20:   //Zapalanie dwóch przeciwnych pasków na raz
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);
@@ -130,9 +130,10 @@ KolorowanieAnimacjiDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedStrip,
     NrLedInStrip=87-NrLedInStrip;
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOX [] %OO
     break;
+  }
 }
 
-KolorowanieAnimacjiDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
+void KolorowanieAnimacjiDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
   switch(NrLedStrip){
     case 26:   //Zapalanie dwóch pasków po przeciwnych stronach z dwóch stron
     KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 20, NrLedInStrip);
