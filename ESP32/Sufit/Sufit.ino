@@ -74,31 +74,19 @@ void WhichLedStripUpdate(){ //Sprawdzanie która taśme led wysłać do aktualiz
 
 void KolorujPasekWPasku(int ColorR, int ColorG, int ColorB, int NrLedStrip){
   switch(NrLedStrip){
-    case 0:
-			for(int i=0; i<120; i++){lsu1.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 1:
-			for(int i=0; i<120; i++){lsu2.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 2:
-			for(int i=0; i<104; i++){lsu3.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 3:
-			for(int i=0; i<104; i++){lsu4.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 4:
-			for(int i=0; i<88;  i++){lsu5.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 5:
-			for(int i=0; i<88;  i++){lsu6.setPixelColor(i,ColorR,ColorG,ColorB);}	break;
-		case 6:
-			for(int i=0; i<88;  i++){lsz6.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 7:
-			for(int i=0; i<88;  i++){lsz5.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 8:
-			for(int i=0; i<104; i++){lsz4.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 9:
-			for(int i=0; i<104; i++){lsz3.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 10:
-			for(int i=0; i<120; i++){lsz2.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-		case 11:
-			for(int i=0; i<120; i++){lsz1.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-	}
+    case 0:   for(int i=0; i<120; i++){lsu1.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 1:   for(int i=0; i<120; i++){lsu2.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 2:   for(int i=0; i<104; i++){lsu3.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 3:   for(int i=0; i<104; i++){lsu4.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 4:   for(int i=0; i<88;  i++){lsu5.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 5:   for(int i=0; i<88;  i++){lsu6.setPixelColor(i,ColorR,ColorG,ColorB);}	break;
+    case 6:   for(int i=0; i<88;  i++){lsz6.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 7:   for(int i=0; i<88;  i++){lsz5.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 8:   for(int i=0; i<104; i++){lsz4.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 9:   for(int i=0; i<104; i++){lsz3.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 10:  for(int i=0; i<120; i++){lsz2.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+    case 11:  for(int i=0; i<120; i++){lsz1.setPixelColor(i,ColorR,ColorG,ColorB);} break;
+  }
   mySensVals[NrLedStrip]=1; //Zaznaczenie numeru taśmy led do aktualizacji
 }
 
