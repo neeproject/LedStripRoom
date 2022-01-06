@@ -40,7 +40,7 @@ DeviceAddress sentempid2 = { 0x28, 0x9E, 0xD8, 0x75, 0xD0, 0x01, 0x3C, 0x35 };
 //===========================WYZWALANIE=WYSYŁANIA=DANYCH=DO=LED=====================\/
 //==================================================================================\/
 
-int mySensVals[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0}; //Czy aktualizować pasek? //Taśmy led + Włącznik
+int ListUpdateLedStrip[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0}; //Czy aktualizować pasek? //Taśmy led + Włącznik
 
 void LedStripShowUpdate(int NrLedStrip){  //Aktualizowanie wybranej wcześniej taśmy led
   switch(NrLedStrip){
@@ -62,7 +62,7 @@ void LedStripShowUpdate(int NrLedStrip){  //Aktualizowanie wybranej wcześniej t
 
 void WhichLedStripUpdate(){ //Sprawdzanie która taśme led wysłać do aktualizacji
   for(int i=0;i<13;i++){
-    if(mySensVals[i]){
+    if(ListUpdateLedStrip[i]){
       LedStripShowUpdate(i);
     }
   }
@@ -79,7 +79,7 @@ void KolorujPasekWPasku(int ColorR, int ColorG, int ColorB, int NrLedStrip){
     case 2:   for(int i=0; i<104; i++){lsu3.setPixelColor(i,ColorR,ColorG,ColorB);} break;
     case 3:   for(int i=0; i<104; i++){lsu4.setPixelColor(i,ColorR,ColorG,ColorB);} break;
     case 4:   for(int i=0; i<88;  i++){lsu5.setPixelColor(i,ColorR,ColorG,ColorB);} break;
-    case 5:   for(int i=0; i<88;  i++){lsu6.setPixelColor(i,ColorR,ColorG,ColorB);}	break;
+    case 5:   for(int i=0; i<88;  i++){lsu6.setPixelColor(i,ColorR,ColorG,ColorB);} break;
     case 6:   for(int i=0; i<88;  i++){lsz6.setPixelColor(i,ColorR,ColorG,ColorB);} break;
     case 7:   for(int i=0; i<88;  i++){lsz5.setPixelColor(i,ColorR,ColorG,ColorB);} break;
     case 8:   for(int i=0; i<104; i++){lsz4.setPixelColor(i,ColorR,ColorG,ColorB);} break;
@@ -87,7 +87,7 @@ void KolorujPasekWPasku(int ColorR, int ColorG, int ColorB, int NrLedStrip){
     case 10:  for(int i=0; i<120; i++){lsz2.setPixelColor(i,ColorR,ColorG,ColorB);} break;
     case 11:  for(int i=0; i<120; i++){lsz1.setPixelColor(i,ColorR,ColorG,ColorB);} break;
   }
-  mySensVals[NrLedStrip]=1; //Zaznaczenie numeru taśmy led do aktualizacji
+  ListUpdateLedStrip[NrLedStrip]=1; //Zaznaczenie numeru taśmy led do aktualizacji
 }
 
 void KolorujDwaWJednejListwie(int ColorR, int ColorG, int ColorB, int NrLedStrip){   //Koloruj po dwa paski na raz w jednej listwie led
@@ -142,7 +142,9 @@ void KolorujWzorekLedowyListwy(int ColorR, int ColorG, int ColorB, int NrLedStri
       KolorujDwaWJednejListwie(ColorR, ColorG, ColorB, 0);   //    XXO [] OOO
     break;
     
-    case 99:  for(int i=0; i<2; i++){ lsw.setPixelColor(i,ColorR,ColorG,ColorB);} break;  //Kolorowanie całego włącznika
+    case 99:  for(int i=0; i<2; i++){ lsw.setPixelColor(i,ColorR,ColorG,ColorB);} 
+    ListUpdateLedStrip[12]=1; //Zaznaczenie numeru taśmy led do aktualizacji //Tutaj tylko dla włącznika
+    break;  //Kolorowanie całego włącznika
   }
 }
 
@@ -161,6 +163,7 @@ void KolorujJednaDiode(int ColorR, int ColorG, int ColorB, int NrLedStrip, int N
     case 10:  lsz2.setPixelColor(NrLedInStrip,ColorR,ColorG,ColorB);  break;
     case 11:  lsz1.setPixelColor(NrLedInStrip,ColorR,ColorG,ColorB);  break;
   }
+  ListUpdateLedStrip[NrLedStrip]=1; //Zaznaczenie numeru taśmy led do aktualizacji
 }
 
 void KolorujDwieDiodyWListwie(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
@@ -173,14 +176,58 @@ void KolorujDwieDiodyWListwie(int ColorR, int ColorG, int ColorB, int NrLedStrip
 void KolorujWzorekLedowyDiody(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){    //Kolorowanie wzorka pojedynczych led 
   switch(NrLedStrip){ 
     case 20:
-      KolorujDwaWJednejListwie(ColorR, ColorG, ColorB, 2);
-      KolorujDwaWJednejListwie(ColorR, ColorG, ColorB, 3);   //    XOX [] XOX
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    XOO [] OOX
+    break;
     case 21:
-      KolorujDwaWJednejListwie(ColorR, ColorG, ColorB, 0);
-      KolorujDwaWJednejListwie(ColorR, ColorG, ColorB, 5);   //    XOO [] OOX
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OXO [] OXO
+    break;
+    case 22:
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOX [] XOO
+    break;
+    case 23:  //Jeden pasek normalnie, drugi od końca ===\/
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
+      NrLedInStrip=119-NrLedInStrip;  //Jeśli w jednym 0 w drugim 119. If w jednym 5, w drugim 114
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    XOO [] OO%
+    break;
+    case 24:
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
+      NrLedInStrip=103-NrLedInStrip;
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OXO [] O%O
+    break;
+    case 25:
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
+      NrLedInStrip=87-NrLedInStrip;
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOX [] %OO
+    break;
+    case 26:  //Odbiera "5" i zapala led nr 5, 114, oraz w przeciwnym pasku te same ledy  ===\/
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);
+      NrLedInStrip=119-NrLedInStrip;
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    HOO [] OOH
+    break;
+    case 27: 
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);
+      NrLedInStrip=103-NrLedInStrip;
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OHO [] OHO
+    break;
+    case 28: 
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);
+      NrLedInStrip=87-NrLedInStrip;
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
+      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOH [] HOO
     break;
 
-    case 99: lsw.setPixelColor(NrLedInStrip,ColorR,ColorG,ColorB);  break;
+
+    case 99: lsw.setPixelColor(NrLedInStrip,ColorR,ColorG,ColorB);  
+    ListUpdateLedStrip[12]=1; //Zaznaczenie numeru taśmy led do aktualizacji //Tutaj tylko dla włącznika
+    break;  //Włącznik sterowanie jedną dioda
   }
 }
 
@@ -216,7 +263,7 @@ void KolorujJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int 
     KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if(NrLedStrip>19){  //Zapalanie kilka ledów - jakieś animacje czy coś
 
-    KolorujJednaDiode(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+    KolorujWzorekLedowyDiody(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
 
   }else if(NrLedStrip>5){   //Zapalanie tylko jednej diody w listwie
     NrLedStrip-=6;
