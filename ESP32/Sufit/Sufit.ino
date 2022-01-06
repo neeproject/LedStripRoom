@@ -173,6 +173,22 @@ void KolorujDwieDiodyWListwie(int ColorR, int ColorG, int ColorB, int NrLedStrip
   KolorujJednaDiode(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
 }
 
+void KolorujWzorekLedowyOdTylu(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
+  switch(NrLedStrip){ 
+    case 0:
+    case 5:
+      NrLedInStrip=119-NrLedInStrip;
+    case 1:
+    case 4:
+      NrLedInStrip=103-NrLedInStrip;
+    case 2:
+    case 3:
+      NrLedInStrip=87-NrLedInStrip;
+    break;
+  }
+  KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);   //    %OO [] OOO
+}
+
 void KolorujWzorekLedowyDiody(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){    //Kolorowanie wzorka pojedynczych led 
   switch(NrLedStrip){ 
     case 20:
@@ -189,39 +205,33 @@ void KolorujWzorekLedowyDiody(int ColorR, int ColorG, int ColorB, int NrLedStrip
     break;
     case 23:  //Jeden pasek normalnie, drugi od końca ===\/
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
-      NrLedInStrip=119-NrLedInStrip;  //Jeśli w jednym 0 w drugim 119. If w jednym 5, w drugim 114
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    XOO [] OO%
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    XOO [] OO%
     break;
     case 24:
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
-      NrLedInStrip=103-NrLedInStrip;
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OXO [] O%O
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OXO [] O%O
     break;
     case 25:
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
-      NrLedInStrip=87-NrLedInStrip;
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOX [] %OO
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOX [] %OO
     break;
     case 26:  //Odbiera "5" i zapala led nr 5, 114, oraz w przeciwnym pasku te same ledy  ===\/
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);
-      NrLedInStrip=119-NrLedInStrip;
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 0, NrLedInStrip);
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    HOO [] OOH
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 0, NrLedInStrip);
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    HOO [] OOH
     break;
     case 27: 
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);
-      NrLedInStrip=103-NrLedInStrip;
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 1, NrLedInStrip);
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OHO [] OHO
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 1, NrLedInStrip);
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OHO [] OHO
     break;
     case 28: 
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
       KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);
-      NrLedInStrip=87-NrLedInStrip;
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 2, NrLedInStrip);
-      KolorujDwieDiodyWListwie(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOH [] HOO
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 2, NrLedInStrip);
+      KolorujWzorekLedowyOdTylu(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOH [] HOO
     break;
 
 
@@ -236,10 +246,6 @@ void KolorujWzorekLedowyDiody(int ColorR, int ColorG, int ColorB, int NrLedStrip
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=GŁÓWNE=VOIDY=======================\/
 //==================================================================================\/
-
-void AnimacjaSufitu(int NrAnimation, int BrightAnimation){  //Nr_Animacji+Jasność
-
-}
 
 void KolorujCalySufit(int ColorR, int ColorG, int ColorB){  //RGB
   for(int i=0;i<6;i++){
@@ -272,7 +278,9 @@ void KolorujJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int 
 }
 
 void KolorujLedOdAdoZ(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedAStrip, int NrLedBStrip){  //RGB+_NrPaska+LedOd+LedDo
-
+  for(int i=NrLedAStrip;i<NrLedBStrip;i++){
+    KolorujJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, i);
+  }
 }
 
 //==================================================================================\/
@@ -284,11 +292,11 @@ void Can_reader() //Odbieranie danych z Cana
   CAN_frame_t rx_frame;
   unsigned long cMillisInReadCan = millis();
 
-  if (xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
+  if(xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
 
-    if (rx_frame.MsgID == 0x011) {	//Informacja tylko do sufitu
+    if(rx_frame.MsgID == 0x011) {	//Informacja tylko do sufitu
 
-      switch (rx_frame.FIR.B.DLC) {   //Sprawdzanie długości ciągu
+      switch(rx_frame.FIR.B.DLC) {   //Sprawdzanie długości ciągu
         case 2:
           AnimacjaSufitu(rx_frame.data.u8[0],rx_frame.data.u8[1]);  //Nr_Animacji+Jasność
         break;
@@ -356,8 +364,6 @@ void setup() {
 
 void loop() {
   Can_reader(); //Odbieranie danych z Cana
-
-
 
   WhichLedStripUpdate();  //Które paski led aktualizować?
 }
