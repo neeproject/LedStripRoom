@@ -71,7 +71,7 @@ void WhichLedStripUpdate(){ //Sprawdzanie która taśme led wysłać do aktualiz
 }
 
 //==================================================================================\/
-//==========================KOLOROWANIE=SUFITU=VOIDY=KOLOROWANIA====================\/
+//========================KOLOROWANIE=SUFITU=PODSTAWA=KOLOROWANIA===================\/
 //==================================================================================\/
 
 void KolorowanieTylkoJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
@@ -154,6 +154,29 @@ void KolorowanieAnimacjiDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLed
 }
 
 
+//Kolorowanie taśm led od środka zakres ledów  NrLedInStrip od 0-59, 0-51, 0-43
+//Ten numer taśmy to będzie 30. Jeszcze nie ustawiony. ##########################
+void KolorowanieTasmOdSrodka(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
+  if(NrLedInStrip<60){
+    int StripLong=NrLedInStrip+60;
+    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 26, StripLong);   //    HOO [] OOH  //59
+  }
+  if(NrLedInStrip<52){
+    int StripMedium=NrLedInStrip+52;
+    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 27, StripMedium); //    OHO [] OHO  //51
+  }
+  if(NrLedInStrip<52){
+    int StripShort=NrLedInStrip+44;
+    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 28, StripShort);  //    OOH [] HOO  //43
+  }
+}
+
+//==================================================================================\/
+//===============================KOLOROWANIE=SUFITU=ANIMACJE========================\/
+//==================================================================================\/
+
+
+
 
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=GŁÓWNE=VOIDY=======================\/
@@ -167,13 +190,13 @@ void KolorujCalySufit(int ColorR, int ColorG, int ColorB){  //RGB
 
 void KolorujJedenPasek(int ColorR, int ColorG, int ColorB, int NrLedStrip){ //RGB+Nr_Paska
   switch(NrLedStrip){
-    case 0: case 5: case 6: case 7: case 16: case 17:     //if(NrLedStrip==(0||5||6||7||16||17)){ ????
+    case 0: case 5: case 6: case 7: case 16: case 17: case 20:    //if(NrLedStrip==(0||5||6||7||16||17||20)){ ????
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 119);
     break;
-    case 1: case 4: case 8: case 9: case 14: case 15:
+    case 1: case 4: case 8: case 9: case 14: case 15: case 21:
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 103);
     break;
-    case 2: case 3: case 10: case 11: case 12: case 13:
+    case 2: case 3: case 10: case 11: case 12: case 13: case 22:
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 87);
     break;
   }
