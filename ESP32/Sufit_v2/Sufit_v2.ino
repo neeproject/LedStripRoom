@@ -227,7 +227,9 @@ void KolorowanieTasmOdSrodkaH(int ColorR, int ColorG, int ColorB, int NrLedStrip
 //===============================KOLOROWANIE=SUFITU=ANIMACJE========================\/
 //==================================================================================\/
 
+void AnimacjaPodstawowa(int NrAnimacji) {
 
+}
 
 
 //==================================================================================\/
@@ -257,11 +259,15 @@ void KolorujJedenPasek(int ColorR, int ColorG, int ColorB, int NrLedStrip){ //RG
 void KolorujJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){  //RGB+Nr_Paska+Nr_Led
   if(NrLedStrip<6){
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
-  }else if(NrLedStrip>25){
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
-  }else if(NrLedStrip>19){
+		}else if (NrLedStrip > 36) {
+			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+		}else if (NrLedStrip > 34) {
+			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+  }else if (NrLedStrip > 31) {
+			KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+  }else if (NrLedStrip > 19) {
     KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
-  }else if(NrLedStrip>5){
+  }else if (NrLedStrip > 5) {
     NrLedStrip-=6;
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }
