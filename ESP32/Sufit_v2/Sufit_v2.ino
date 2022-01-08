@@ -106,32 +106,32 @@ void KolorowanieAnimacjiDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedS
     case 20:   //Normalnie i od końca
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);
     NrLedInStrip=119-NrLedInStrip;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);   //    XOO [] OOO
+    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);   //    HOO [] OOO
     break;
     case 21:   
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 1, NrLedInStrip);
     NrLedInStrip=103-NrLedInStrip;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 1, NrLedInStrip);   //    OXO [] OOO
+    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 1, NrLedInStrip);   //    OHO [] OOO
     break;
     case 22:   
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 2, NrLedInStrip);
     NrLedInStrip=87-NrLedInStrip;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 2, NrLedInStrip);   //    OOX [] OOO
+    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 2, NrLedInStrip);   //    OOH [] OOO
     break;
     case 23:
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 3, NrLedInStrip);
     NrLedInStrip=87-NrLedInStrip;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOO [] XOO
+    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 3, NrLedInStrip);   //    OOO [] HOO
     break;
     case 24:
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 4, NrLedInStrip);
     NrLedInStrip=103-NrLedInStrip;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OOO [] OXO
+    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 4, NrLedInStrip);   //    OOO [] OHO
     break;
     case 25:
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 5, NrLedInStrip);
     NrLedInStrip=119-NrLedInStrip;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    OOO [] OOX
+    KolorowanieDwochLedow(ColorR, ColorG, ColorB, 5, NrLedInStrip);   //    OOO [] OOH
     break;
     case 26:   //Zapalanie dwóch przeciwnych pasków na raz
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);
@@ -181,40 +181,47 @@ void KolorowanieAnimacjiDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLed
   }
 }
 
-
 //Kolorowanie taśm led od środka zakres ledów  NrLedInStrip od 0-59, 0-51, 0-43
-//Ten numer taśmy to będzie 30. Jeszcze nie ustawiony. ##########################
-void KolorowanieTasmOdSrodka(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
-  if(NrLedInStrip<60){
-    int StripLong=NrLedInStrip+60;
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 26, StripLong);   //    HOO [] OOH  //59
-  }
-  if(NrLedInStrip<52){
-    int StripMedium=NrLedInStrip+52;
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 27, StripMedium); //    OHO [] OHO  //51
-  }
-  if(NrLedInStrip<52){
-    int StripShort=NrLedInStrip+44;
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 28, StripShort);  //    OOH [] HOO  //43
-  }
+void KolorowanieTasmOdSrodkaO(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+	switch (NrLedStrip) {
+		case 35:
+			if (NrLedInStrip < 60) {
+				int StripLong = NrLedInStrip + 60;
+				KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 20, StripLong);   //    HOO [C] OOO  //59
+			}
+			if (NrLedInStrip < 52) {
+				int StripMedium = NrLedInStrip + 52;
+				KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 21, StripMedium); //    OHO [C] OOO  //51
+			}
+			if (NrLedInStrip < 52) {
+				int StripShort = NrLedInStrip + 44;
+				KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 22, StripShort);  //    OOH [C] OOO  //43
+			}
+		break;	//	HHH [C] OOO
+		case 36:
+			if (NrLedInStrip < 60) {
+				int StripLong = NrLedInStrip + 60;
+				KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 25, StripLong);   //    OOO [C] OOH  //59
+			}
+			if (NrLedInStrip < 52) {
+				int StripMedium = NrLedInStrip + 52;
+				KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 24, StripMedium); //    OOO [C] OHO  //51
+			}
+			if (NrLedInStrip < 52) {
+				int StripShort = NrLedInStrip + 44;
+				KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 23, StripShort);  //    OOO [C] HOO  //43
+			}
+			break;	//	OOO [C] HHH
 }
 
-//Kolorowanie taśm led od środka zakres ledów  NrLedInStrip od 0-59, 0-51, 0-43
-//Ten numer taśmy to będzie 31. Jeszcze nie ustawiony. ##########################
-void KolorowanieTasmOdSrodka(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
-  if(NrLedInStrip<60){
-    int StripLong=NrLedInStrip+60;
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 26, StripLong);   //    HOO [] OOH  //59
-  }
-  if(NrLedInStrip<52){
-    int StripMedium=NrLedInStrip+52;
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 27, StripMedium); //    OHO [] OHO  //51
-  }
-  if(NrLedInStrip<52){
-    int StripShort=NrLedInStrip+44;
-    KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, 28, StripShort);  //    OOH [] HOO  //43
-  }
+void KolorowanieTasmOdSrodkaH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+	switch (NrLedStrip) {
+		case 37:
+			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, 35, StripLong);
+			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, 36, StripLong);		//	HHH	[C]	HHH
+		break;
 }
+
 
 //==================================================================================\/
 //===============================KOLOROWANIE=SUFITU=ANIMACJE========================\/
