@@ -218,7 +218,7 @@ void KolorowanieTasmOdSrodkaH(int ColorR, int ColorG, int ColorB, int NrLedStrip
 	switch (NrLedStrip) {
 		case 37:
 			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, 35, StripLong);
-			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, 36, StripLong);		//	HHH	[C]	HHH
+		 KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, 36, StripLong);		//	HHH	[C]	HHH
 		break;
 }
 
