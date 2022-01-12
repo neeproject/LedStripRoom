@@ -38,6 +38,25 @@ DeviceAddress sentempid2 = { 0x28, 0x9E, 0xD8, 0x75, 0xD0, 0x01, 0x3C, 0x35 };
 
 
 //==================================================================================\/
+//=====================================GOTOWE=KOLORY================================\/
+//==================================================================================\/
+
+uint32_t ColorLibrayArray[20];  //Tablica kolorów.
+
+ColorLibrayArray[0]  = ledontv.Color(255, 0, 0);    //red
+ColorLibrayArray[1]  = ledontv.Color(255, 128, 0);  //orange
+ColorLibrayArray[2]  = ledontv.Color(255, 255, 0);  //yellow
+ColorLibrayArray[3]  = ledontv.Color(128, 255, 0);  //green-yellow
+ColorLibrayArray[4]  = ledontv.Color(0, 255, 0);    //green
+ColorLibrayArray[5]  = ledontv.Color(0, 255, 128);  //green-blu
+ColorLibrayArray[6]  = ledontv.Color(0, 255, 255);  //Cyan
+ColorLibrayArray[7]  = ledontv.Color(0, 128, 255);  //Brandeis Blue
+ColorLibrayArray[8]  = ledontv.Color(0, 0, 255);    //Blue
+ColorLibrayArray[9]  = ledontv.Color(128, 0, 255);  //indygo (perpul)
+ColorLibrayArray[10] = ledontv.Color(255, 0, 255);  //Magenta
+ColorLibrayArray[11] = ledontv.Color(255, 0, 128);  //Rose
+
+//==================================================================================\/
 //===========================WYZWALANIE=WYSYŁANIA=DANYCH=DO=LED=====================\/
 //==================================================================================\/
 
