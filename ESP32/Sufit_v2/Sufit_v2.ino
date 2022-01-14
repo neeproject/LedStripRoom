@@ -43,18 +43,18 @@ DeviceAddress sentempid2 = { 0x28, 0x9E, 0xD8, 0x75, 0xD0, 0x01, 0x3C, 0x35 };
 
 uint32_t ColorLibrayArray[20];  //Tablica kolorów.
 
-ColorLibrayArray[0]  = ledontv.Color(255, 0, 0);    //red
-ColorLibrayArray[1]  = ledontv.Color(255, 128, 0);  //orange
-ColorLibrayArray[2]  = ledontv.Color(255, 255, 0);  //yellow
-ColorLibrayArray[3]  = ledontv.Color(128, 255, 0);  //green-yellow
-ColorLibrayArray[4]  = ledontv.Color(0, 255, 0);    //green
-ColorLibrayArray[5]  = ledontv.Color(0, 255, 128);  //green-blu
-ColorLibrayArray[6]  = ledontv.Color(0, 255, 255);  //Cyan
-ColorLibrayArray[7]  = ledontv.Color(0, 128, 255);  //Brandeis Blue
-ColorLibrayArray[8]  = ledontv.Color(0, 0, 255);    //Blue
-ColorLibrayArray[9]  = ledontv.Color(128, 0, 255);  //indygo (perpul)
-ColorLibrayArray[10] = ledontv.Color(255, 0, 255);  //Magenta
-ColorLibrayArray[11] = ledontv.Color(255, 0, 128);  //Rose
+ColorLibrayArray[0]  = lsu1.Color(255, 0, 0);    //red
+ColorLibrayArray[1]  = lsu1.Color(255, 128, 0);  //orange
+ColorLibrayArray[2]  = lsu1.Color(255, 255, 0);  //yellow
+ColorLibrayArray[3]  = lsu1.Color(128, 255, 0);  //green-yellow
+ColorLibrayArray[4]  = lsu1.Color(0, 255, 0);    //green
+ColorLibrayArray[5]  = lsu1.Color(0, 255, 128);  //green-blu
+ColorLibrayArray[6]  = lsu1.Color(0, 255, 255);  //Cyan
+ColorLibrayArray[7]  = lsu1.Color(0, 128, 255);  //Brandeis Blue
+ColorLibrayArray[8]  = lsu1.Color(0, 0, 255);    //Blue
+ColorLibrayArray[9]  = lsu1.Color(128, 0, 255);  //indygo (perpul)
+ColorLibrayArray[10] = lsu1.Color(255, 0, 255);  //Magenta
+ColorLibrayArray[11] = lsu1.Color(255, 0, 128);  //Rose
 
 //==================================================================================\/
 //===========================WYZWALANIE=WYSYŁANIA=DANYCH=DO=LED=====================\/
@@ -62,7 +62,8 @@ ColorLibrayArray[11] = ledontv.Color(255, 0, 128);  //Rose
 
 int ListUpdateLedStrip[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Czy aktualizować pasek? //Taśmy led + Włącznik + Obudowa went
 
-void LedStripShowUpdate(int NrLedStrip){  //Aktualizowanie wybranej wcześniej taśmy led
+//Aktualizowanie wybranej wcześniej taśmy led
+void LedStripShowUpdate(int NrLedStrip){
   switch(NrLedStrip){
     case 0:   lsu1.show(); break;
     case 1:   lsu2.show(); break;
@@ -81,7 +82,8 @@ void LedStripShowUpdate(int NrLedStrip){  //Aktualizowanie wybranej wcześniej t
   }
 }
 
-void WhichLedStripUpdate(){ //Sprawdzanie która taśme led wysłać do aktualizacji
+//Sprawdzanie która taśme led wysłać do aktualizacji
+void WhichLedStripUpdate(){
   for(int i=0;i<14;i++){
     if(ListUpdateLedStrip[i]){
       LedStripShowUpdate(i);
@@ -120,7 +122,7 @@ void KolorowanieDwochLedow(int ColorR, int ColorG, int ColorB, int NrLedStrip, i
   KolorowanieTylkoJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
 }
 
-void KolorowanieAnimacjiDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+void KolorowanieWiecejNizDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
   switch (NrLedStrip) {
   case 20:   //Normalnie i od końca
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);
@@ -183,19 +185,19 @@ void KolorowanieAnimacjiDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedS
   }
 }
 
-void KolorowanieAnimacjiDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+void KolorowanieWiecejNizDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
   switch (NrLedStrip) {
-  case 32:   //Zapalanie dwóch pasków po przeciwnych stronach z dwóch stron
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 20, NrLedInStrip);
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 25, NrLedInStrip);      //    HOO [] OOH
+    case 32:   //Zapalanie dwóch pasków po przeciwnych stronach z dwóch stron
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 20, NrLedInStrip);
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 25, NrLedInStrip);      //    HOO [] OOH
     break;
-  case 33:
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 21, NrLedInStrip);
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 24, NrLedInStrip);      //    OHO [] OHO
+    case 33:
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 21, NrLedInStrip);
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 24, NrLedInStrip);      //    OHO [] OHO
     break;
-  case 34:
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 22, NrLedInStrip);
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 23, NrLedInStrip);      //    OOH [] HOO
+    case 34:
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 22, NrLedInStrip);
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 23, NrLedInStrip);      //    OOH [] HOO
     break;
   }
 }
@@ -206,29 +208,29 @@ void KolorowanieTasmOdSrodkaO(int ColorR, int ColorG, int ColorB, int NrLedStrip
   case 35:
     if (NrLedInStrip < 60) {
       int StripLong = NrLedInStrip + 60;
-      KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 20, StripLong);   //    HOO [C] OOO  //59
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 20, StripLong);   //    HOO [C] OOO  //59
     }
     if (NrLedInStrip < 52) {
       int StripMedium = NrLedInStrip + 52;
-      KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 21, StripMedium); //    OHO [C] OOO  //51
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 21, StripMedium); //    OHO [C] OOO  //51
     }
-    if (NrLedInStrip < 52) {
+    if (NrLedInStrip < 44) {
       int StripShort = NrLedInStrip + 44;
-      KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 22, StripShort);  //    OOH [C] OOO  //43
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 22, StripShort);  //    OOH [C] OOO  //43
     }
     break;	//	HHH [C] OOO
   case 36:
     if (NrLedInStrip < 60) {
       int StripLong = NrLedInStrip + 60;
-      KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 25, StripLong);   //    OOO [C] OOH  //59
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 25, StripLong);   //    OOO [C] OOH  //59
     }
     if (NrLedInStrip < 52) {
       int StripMedium = NrLedInStrip + 52;
-      KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 24, StripMedium); //    OOO [C] OHO  //51
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 24, StripMedium); //    OOO [C] OHO  //51
     }
-    if (NrLedInStrip < 52) {
+    if (NrLedInStrip < 44) {
       int StripShort = NrLedInStrip + 44;
-      KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, 23, StripShort);  //    OOO [C] HOO  //43
+      KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 23, StripShort);  //    OOO [C] HOO  //43
     }
     break;	//	OOO [C] HHH
   }
@@ -247,10 +249,63 @@ void KolorowanieTasmOdSrodkaH(int ColorR, int ColorG, int ColorB, int NrLedStrip
 //===============================KOLOROWANIE=SUFITU=ANIMACJE========================\/
 //==================================================================================\/
 
-void AnimacjaPodstawowa(int NrAnimacji) {
+uint8_t AnimSlideOne = { 0, 0, 0, 0, 255 };  // Stan, R, G, B, Bright
 
+void AnimacjaSlideNext() {
+  switch (AnimSlideOne[0]) {
+  case 0: //Jeśli uruchamiasz pierwszy raz, za kolejnymi jest ten stan pomijany i leci od 1.
+      AnimSlideOne[1]++;
+      if (AnimSlideOne[1] == 255) { //R=255 G=0 B=0
+        AnimSlideOne[0]++;  //czyli next to stan 1
+      }
+    break;
+  case 1:
+      AnimSlideOne[2]++;
+      if (AnimSlideOne[2] == 255) { //R=255 G=255 B=0
+        AnimSlideOne[0]++;  //czyli next to stan 2
+      }
+    break;
+  case 2:
+      AnimSlideOne[1]--;
+      if (AnimSlideOne[1] == 0) { //R=0 G=255 B=0
+        AnimSlideOne[0]++;  //czyli next to stan 3
+      }
+    break;
+  case 3:
+      AnimSlideOne[3]++;
+      if (AnimSlideOne[3] == 255) { //R=0 G=255 B=255
+        AnimSlideOne[0]++;  //czyli next to stan 4
+      }
+    break;
+  case 4:
+      AnimSlideOne[2]--;
+      if (AnimSlideOne[2] == 0) { //R=0 G=0 B=255
+        AnimSlideOne[0]++;  //czyli next to stan 5
+      }
+    break;
+  case 5:
+      AnimSlideOne[1]++;
+      if (AnimSlideOne[1] == 255) { //R=255 G=0 B=255
+        AnimSlideOne[0]++;  //czyli next to stan 6
+      }
+    break;
+  case 6:
+      AnimSlideOne[3]--;
+      if (AnimSlideOne[3] == 0) { //R=255 G=0 B=0
+        AnimSlideOne[0] = 1;  //czyli next to stan 0
+      }
+    break;
 }
 
+
+/*
+ for (uint16_t i = 0; i < strip.numPixels(); i++) {
+    uint8_t LEDr = (strip.getPixelColor(i) >> 16);
+    uint8_t LEDg = (strip.getPixelColor(i) >> 8);
+    uint8_t LEDb = (strip.getPixelColor(i));
+    strip.setPixelColor(i, LEDr, LEDg, LEDb);
+  }
+*/
 
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=GŁÓWNE=VOIDY=======================\/
@@ -284,9 +339,9 @@ void KolorujJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int 
 		}else if (NrLedStrip > 34) {
 			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if (NrLedStrip > 31) {
-			KolorowanieAnimacjiDwochDiodH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+			KolorowanieWiecejNizDwochDiodH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if (NrLedStrip > 19) {
-    KolorowanieAnimacjiDwochDiod(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+    KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if (NrLedStrip > 5) {
     NrLedStrip-=6;
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
@@ -369,10 +424,11 @@ void setup() {
   lsz5.begin();
   lsz6.begin();
   lsw.begin();
-
+  lwent.begin();
   // Neopixel Initialize all pixels to 'off'
   KolorujCalySufit(0,0,0);
   lsw.show();
+  lwent.show();
 }
 
 void loop() {
