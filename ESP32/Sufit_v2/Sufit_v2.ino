@@ -5,6 +5,8 @@
 #include <DallasTemperature.h>
 #include <Adafruit_NeoPixel.h>
 
+#include <cstdint>  //Potem usunąć, potrzebne tylko do VS, aby podświetlać inty.
+
 //NeoPixel
 Adafruit_NeoPixel lsu1(120, 15, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel lsu2(120, 2,  NEO_GRB + NEO_KHZ800);
@@ -41,29 +43,28 @@ DeviceAddress sentempid2 = { 0x28, 0x9E, 0xD8, 0x75, 0xD0, 0x01, 0x3C, 0x35 };
 //=====================================GOTOWE=KOLORY================================\/
 //==================================================================================\/
 
-uint32_t ColorLibrayArray[20];  //Tablica kolorów.
-
-ColorLibrayArray[0]  = lsu1.Color(255, 0, 0);    //red
-ColorLibrayArray[1]  = lsu1.Color(255, 128, 0);  //orange
-ColorLibrayArray[2]  = lsu1.Color(255, 255, 0);  //yellow
-ColorLibrayArray[3]  = lsu1.Color(128, 255, 0);  //green-yellow
-ColorLibrayArray[4]  = lsu1.Color(0, 255, 0);    //green
-ColorLibrayArray[5]  = lsu1.Color(0, 255, 128);  //green-blu
-ColorLibrayArray[6]  = lsu1.Color(0, 255, 255);  //Cyan
-ColorLibrayArray[7]  = lsu1.Color(0, 128, 255);  //Brandeis Blue
-ColorLibrayArray[8]  = lsu1.Color(0, 0, 255);    //Blue
-ColorLibrayArray[9]  = lsu1.Color(128, 0, 255);  //indygo (perpul)
-ColorLibrayArray[10] = lsu1.Color(255, 0, 255);  //Magenta
-ColorLibrayArray[11] = lsu1.Color(255, 0, 128);  //Rose
-
+uint32_t ColorLibrayArray[12] = {  //Tablica kolorów.
+lsu1.Color(255, 0, 0),    //red
+lsu1.Color(255, 128, 0),  //orange
+lsu1.Color(255, 255, 0),  //yellow
+lsu1.Color(128, 255, 0),  //green-yellow
+lsu1.Color(0, 255, 0),    //green
+lsu1.Color(0, 255, 128),  //green-blu
+lsu1.Color(0, 255, 255),  //Cyan
+lsu1.Color(0, 128, 255),  //Brandeis Blue
+lsu1.Color(0, 0, 255),   //Blue
+lsu1.Color(128, 0, 255),  //indygo (perpul)
+lsu1.Color(255, 0, 255),  //Magenta
+lsu1.Color(255, 0, 128)  //Rose
+};
 //==================================================================================\/
 //===========================WYZWALANIE=WYSYŁANIA=DANYCH=DO=LED=====================\/
 //==================================================================================\/
 
-int ListUpdateLedStrip[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Czy aktualizować pasek? //Taśmy led + Włącznik + Obudowa went
+uint8_t ListUpdateLedStrip[14] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Czy aktualizować pasek? //Taśmy led + Włącznik + Obudowa went
 
 //Aktualizowanie wybranej wcześniej taśmy led
-void LedStripShowUpdate(int NrLedStrip){
+void LedStripShowUpdate(uint8_t NrLedStrip){
   switch(NrLedStrip){
     case 0:   lsu1.show(); break;
     case 1:   lsu2.show(); break;
@@ -84,9 +85,10 @@ void LedStripShowUpdate(int NrLedStrip){
 
 //Sprawdzanie która taśme led wysłać do aktualizacji
 void WhichLedStripUpdate(){
-  for(int i=0;i<14;i++){
+  for(uint8_t i=0;i<14;i++){
     if(ListUpdateLedStrip[i]){
       LedStripShowUpdate(i);
+      ListUpdateLedStrip[i] = 0;
     }
   }
 }
@@ -95,7 +97,7 @@ void WhichLedStripUpdate(){
 //========================KOLOROWANIE=SUFITU=PODSTAWA=KOLOROWANIA===================\/
 //==================================================================================\/
 
-void KolorowanieTylkoJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){
+void KolorowanieTylkoJednegoLeda(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip){
   switch(NrLedStrip){
     case 0:   lsu1.setPixelColor(NrLedInStrip,ColorR,ColorG,ColorB);  break;
     case 1:   lsu2.setPixelColor(NrLedInStrip,ColorR,ColorG,ColorB);  break;
@@ -115,14 +117,14 @@ void KolorowanieTylkoJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedSt
   ListUpdateLedStrip[NrLedStrip]=1;
 }
 
-void KolorowanieDwochLedow(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){ //NrLedStrip 0-5
+void KolorowanieDwochLedow(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip){ //NrLedStrip 0-5
   NrLedStrip*=2;
   KolorowanieTylkoJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   NrLedStrip+=1;
   KolorowanieTylkoJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
 }
 
-void KolorowanieWiecejNizDwochDiod(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+void KolorowanieWiecejNizDwochDiod(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip) {
   switch (NrLedStrip) {
   case 20:   //Normalnie i od końca
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, 0, NrLedInStrip);
@@ -185,7 +187,7 @@ void KolorowanieWiecejNizDwochDiod(int ColorR, int ColorG, int ColorB, int NrLed
   }
 }
 
-void KolorowanieWiecejNizDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+void KolorowanieWiecejNizDwochDiodH(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip) {
   switch (NrLedStrip) {
     case 32:   //Zapalanie dwóch pasków po przeciwnych stronach z dwóch stron
       KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, 20, NrLedInStrip);
@@ -203,7 +205,7 @@ void KolorowanieWiecejNizDwochDiodH(int ColorR, int ColorG, int ColorB, int NrLe
 }
 
 //Kolorowanie taśm led od środka zakres ledów  NrLedInStrip od 0-59, 0-51, 0-43
-void KolorowanieTasmOdSrodkaO(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+void KolorowanieTasmOdSrodkaO(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip) {
   switch (NrLedStrip) {
   case 35:
     if (NrLedInStrip < 60) {
@@ -249,53 +251,23 @@ void KolorowanieTasmOdSrodkaH(int ColorR, int ColorG, int ColorB, int NrLedStrip
 //===============================KOLOROWANIE=SUFITU=ANIMACJE========================\/
 //==================================================================================\/
 
-uint8_t AnimSlideOne = { 0, 0, 0, 0, 255 };  // Stan, R, G, B, Bright
+uint16_t ColorSmoothHSV = 0;  //0-65535
+uint16_t SmoothDelayHSV = 100;
 
-void AnimacjaSlideNext() {
-  switch (AnimSlideOne[0]) {
-  case 0: //Jeśli uruchamiasz pierwszy raz, za kolejnymi jest ten stan pomijany i leci od 1.
-      AnimSlideOne[1]++;
-      if (AnimSlideOne[1] == 255) { //R=255 G=0 B=0
-        AnimSlideOne[0]++;  //czyli next to stan 1
-      }
-    break;
-  case 1:
-      AnimSlideOne[2]++;
-      if (AnimSlideOne[2] == 255) { //R=255 G=255 B=0
-        AnimSlideOne[0]++;  //czyli next to stan 2
-      }
-    break;
-  case 2:
-      AnimSlideOne[1]--;
-      if (AnimSlideOne[1] == 0) { //R=0 G=255 B=0
-        AnimSlideOne[0]++;  //czyli next to stan 3
-      }
-    break;
-  case 3:
-      AnimSlideOne[3]++;
-      if (AnimSlideOne[3] == 255) { //R=0 G=255 B=255
-        AnimSlideOne[0]++;  //czyli next to stan 4
-      }
-    break;
-  case 4:
-      AnimSlideOne[2]--;
-      if (AnimSlideOne[2] == 0) { //R=0 G=0 B=255
-        AnimSlideOne[0]++;  //czyli next to stan 5
-      }
-    break;
-  case 5:
-      AnimSlideOne[1]++;
-      if (AnimSlideOne[1] == 255) { //R=255 G=0 B=255
-        AnimSlideOne[0]++;  //czyli next to stan 6
-      }
-    break;
-  case 6:
-      AnimSlideOne[3]--;
-      if (AnimSlideOne[3] == 0) { //R=255 G=0 B=0
-        AnimSlideOne[0] = 1;  //czyli next to stan 0
-      }
-    break;
+
+uint16_t ChangeColorSmoothHSV() { 
+  ColorSmoothHSV += SmoothDelayHSV;
+  return ColorSmoothHSV;
 }
+
+
+
+
+void AnimateSmoothAll() {
+  uint32_t rgbcolor = lsu1.ColorHSV(ChangeColorSmoothHSV, 255, 255);  //przeskok koloru,nasycenie,jasność
+}
+
+
 
 
 /*
@@ -305,19 +277,21 @@ void AnimacjaSlideNext() {
     uint8_t LEDb = (strip.getPixelColor(i));
     strip.setPixelColor(i, LEDr, LEDg, LEDb);
   }
+
+  hue = first_hue + (i * reps * 65536) / numLEDs;
 */
 
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=GŁÓWNE=VOIDY=======================\/
 //==================================================================================\/
 
-void KolorujCalySufit(int ColorR, int ColorG, int ColorB){  //RGB
-  for(int i=0;i<5;i++){
+void KolorujCalySufit(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB){  //RGB
+  for(uint8_t i=0;i<5;i++){
     KolorujJedenPasek(ColorR, ColorG, ColorB, i);
   }
 }
 
-void KolorujJedenPasek(int ColorR, int ColorG, int ColorB, int NrLedStrip){ //RGB+Nr_Paska
+void KolorujJedenPasek(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip){ //RGB+Nr_Paska
   switch(NrLedStrip){
     case 0: case 5: case 6: case 7: case 16: case 17: case 20:    //if(NrLedStrip==(0||5||6||7||16||17||20)){ ????
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 119);
@@ -331,7 +305,7 @@ void KolorujJedenPasek(int ColorR, int ColorG, int ColorB, int NrLedStrip){ //RG
   }
 }
 
-void KolorujJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip){  //RGB+Nr_Paska+Nr_Led
+void KolorujJednegoLeda(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip){  //RGB+Nr_Paska+Nr_Led
   if(NrLedStrip<6){
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
 		}else if (NrLedStrip > 36) {
@@ -348,7 +322,7 @@ void KolorujJednegoLeda(int ColorR, int ColorG, int ColorB, int NrLedStrip, int 
   }
 }
 
-void KolorujLedOdAdoZ(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedAStrip, int NrLedBStrip){  //RGB+_NrPaska+LedOd+LedDo
+void KolorujLedOdAdoZ(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedAStrip, int NrLedBStrip){  //RGB+_NrPaska+LedOd+LedDo
   for(int i=NrLedAStrip;i<NrLedBStrip;i++){
     KolorujJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, i);
   }
