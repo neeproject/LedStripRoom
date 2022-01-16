@@ -285,50 +285,51 @@ void AnimateSmoothAll() {
 }
 
 uint16_t RainbowColorStartAllHSV = 0;    //0-65535 = kolor HSV
-uint16_t RainbowJumpAllHSV = 10;  //Przeskok koloru HSV
-uint8_t RainbowJumpAllOneLedHSV = 100;
+uint16_t RainbowJumpAllHSV = 10;  //To wpłynie na prędkość przejścia kolorów
+uint16_t RainbowJumpAllOneLedHSV = 100;  //Większa wartość to więcej kolorów na taśmach
+uint8_t RainbowSaturationAllHSV = 255;    //nasycenie HSV / 0-białe / 255-mocny kolor   //USUNAĆ
 uint8_t RainbowBrightAllHSV = 255;        //jasność HSV
 
 void AnimateRainbow(uint16_t StartColorRainbowHSV, uint16_t RainbowJumpOneHSV, uint8_t RainbowBrightHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
   case 0:
     for (uint8_t i = 0; i < 120; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV),255, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 0);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 1);
     }
     break;
   case 1:
     for (uint8_t i = 0; i < 104; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), 255, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 2);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 3);
     }
     break;
   case 2:
     for (uint8_t i = 0; i < 88; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), 255, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 4);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 5);
     }
     break;
   case 3:
     for (uint8_t i = 0; i < 88; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), 255, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 6);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 7);
     }
     break;
   case 4:
     for (uint8_t i = 0; i < 104; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), 255, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 8);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 9);
     }
     break;
   case 5:
     for (uint8_t i = 0; i < 120; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), 255, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 10);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 11);
     }
@@ -346,7 +347,7 @@ void AnimateRainbowSyncAll() {
   AnimateRainbow(RainbowColorStartAllHSV+8,  RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 4);
   AnimateRainbow(RainbowColorStartAllHSV,    RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 5);
 
-  RainbowColorStartAllHSV += RainbowJumpAllHSV;
+  RainbowColorStartAllHSV += RainbowJumpAllHSV;   
 }
 
 /*
