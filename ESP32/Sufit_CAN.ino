@@ -117,6 +117,7 @@ void KolorowanieTylkoJednegoLeda(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB,
   ListUpdateLedStrip[NrLedStrip]=1;
 }
 
+
 void KolorowanieDwochLedow(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip){ //NrLedStrip 0-5
   NrLedStrip*=2;
   KolorowanieTylkoJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
@@ -286,50 +287,50 @@ void AnimateSmoothAll() {
 
 uint16_t RainbowColorStartAllHSV = 0;    //0-65535 = kolor HSV
 uint16_t RainbowJumpAllHSV = 10;  //To wpłynie na prędkość przejścia kolorów
-uint16_t RainbowJumpAllOneLedHSV = 100;  //Większa wartość to więcej kolorów na taśmach
+uint16_t RainbowJumpOneHSV = 100;  //Większa wartość to więcej kolorów na taśmach
 uint8_t RainbowSaturationAllHSV = 255;    //nasycenie HSV / 0-białe / 255-mocny kolor   //USUNAĆ
 uint8_t RainbowBrightAllHSV = 255;        //jasność HSV
 
-void AnimateRainbow(uint16_t StartColorRainbowHSV, uint16_t RainbowJumpOneHSV, uint8_t RainbowBrightHSV, uint8_t NrLedStrip) {
+void AnimateRainbow(uint16_t StartColorRainbowHSV, uint8_t RainbowBrightHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
   case 0:
     for (uint8_t i = 0; i < 120; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 0);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 1);
     }
     break;
   case 1:
     for (uint8_t i = 0; i < 104; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 2);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 3);
     }
     break;
   case 2:
     for (uint8_t i = 0; i < 88; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 4);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 5);
     }
     break;
   case 3:
     for (uint8_t i = 0; i < 88; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 6);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 7);
     }
     break;
   case 4:
     for (uint8_t i = 0; i < 104; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 8);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 9);
     }
     break;
   case 5:
     for (uint8_t i = 0; i < 120; i++) {
-      uint32_t Color32Rainbow = lsu1.ColorHSV((i + StartColorRainbowHSV + RainbowJumpOneHSV), RainbowSaturationAllHSV, RainbowBrightHSV);
+      uint32_t Color32Rainbow = lsu1.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), RainbowSaturationAllHSV, RainbowBrightHSV);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 10);
       KolorowanieTasmHSV(Color32Rainbow, i, 1, 11);
     }
@@ -340,12 +341,12 @@ void AnimateRainbow(uint16_t StartColorRainbowHSV, uint16_t RainbowJumpOneHSV, u
 
 void AnimateRainbowSyncAll() {
 
-  AnimateRainbow(RainbowColorStartAllHSV,    RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 0);
-  AnimateRainbow(RainbowColorStartAllHSV+8,  RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 1);
-  AnimateRainbow(RainbowColorStartAllHSV+16, RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 2);
-  AnimateRainbow(RainbowColorStartAllHSV+16, RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 3);
-  AnimateRainbow(RainbowColorStartAllHSV+8,  RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 4);
-  AnimateRainbow(RainbowColorStartAllHSV,    RainbowJumpAllOneLedHSV, RainbowBrightAllHSV, 5);
+  AnimateRainbow(RainbowColorStartAllHSV, RainbowBrightAllHSV, 0);
+  AnimateRainbow(RainbowColorStartAllHSV + (8*RainbowJumpOneHSV),  RainbowBrightAllHSV, 1);
+  AnimateRainbow(RainbowColorStartAllHSV + (16 * RainbowJumpOneHSV), RainbowBrightAllHSV, 2);
+  AnimateRainbow(RainbowColorStartAllHSV + (16 * RainbowJumpOneHSV), RainbowBrightAllHSV, 3);
+  AnimateRainbow(RainbowColorStartAllHSV + (8 * RainbowJumpOneHSV),  RainbowBrightAllHSV, 4);
+  AnimateRainbow(RainbowColorStartAllHSV,  RainbowBrightAllHSV, 5);
 
   RainbowColorStartAllHSV += RainbowJumpAllHSV;   
 }
@@ -373,7 +374,7 @@ for ( uint16_t i= 0 ; i<liczbaLED; i++) {
 //==================================================================================\/
 
 void KolorujCalySufit(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB){  //RGB
-  for(uint8_t i=0;i<5;i++){
+  for(uint8_t i=0;i<6;i++){
     KolorujJedenPasek(ColorR, ColorG, ColorB, i);
   }
 }
@@ -395,25 +396,45 @@ void KolorujJedenPasek(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t N
 void KolorujJednegoLeda(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip){  //RGB+Nr_Paska+Nr_Led
   if(NrLedStrip<6){
     KolorowanieDwochLedow(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
-		}else if (NrLedStrip > 36) {
-			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
-		}else if (NrLedStrip > 34) {
-			KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+	}else if (NrLedStrip > 36) {
+    KolorowanieTasmOdSrodkaH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+	}else if (NrLedStrip > 34) {
+		KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if (NrLedStrip > 31) {
-			KolorowanieWiecejNizDwochDiodH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+		KolorowanieWiecejNizDwochDiodH(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if (NrLedStrip > 19) {
     KolorowanieWiecejNizDwochDiod(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }else if (NrLedStrip > 5) {
     NrLedStrip-=6;
-    KolorowanieDwochLedow(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
+    KolorowanieTylkoJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, NrLedInStrip);
   }
 }
 
 void KolorujLedOdAdoZ(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedAStrip, int NrLedBStrip){  //RGB+_NrPaska+LedOd+LedDo
-  for(int i=NrLedAStrip;i<NrLedBStrip;i++){
+  for(int i=NrLedAStrip;i<=NrLedBStrip;i++){
     KolorujJednegoLeda(ColorR, ColorG, ColorB, NrLedStrip, i);
   }
 }
+
+//==================================================================================\/
+
+uint8_t ModeAnimation = 0;
+uint32_t PreviousTimeAnimation = 0;
+uint16_t DelayTimeAnimation = 20;
+
+void HeadVoidAnimation() {
+  if ((millis() - PreviousTimeAnimation) > DelayTimeAnimation) {
+    PreviousTimeAnimation = millis();
+
+    switch (ModeAnimation) {
+    case 1: AnimateSmoothAll();
+      break;
+    case 2: AnimateRainbowSyncAll();
+      break;
+    }
+  }
+}
+
 
 //==================================================================================\/
 //=======================================CAN=READ===================================\/
@@ -426,7 +447,30 @@ void Can_reader() //Odbieranie danych z Cana
 
   if(xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
 
-    if(rx_frame.MsgID == 0x011) {	//Informacja tylko do sufitu
+    if (rx_frame.MsgID == 0x010) {	//Informacja tylko do sufitu RGB www
+      switch (rx_frame.FIR.B.DLC) {   //Sprawdzanie długości ciągu
+      case 2:
+        switch (rx_frame.data.u8[0]) {
+          case 0: ModeAnimation = rx_frame.data.u8[1];  //Typ animacji  //0 0 - wylaczenie
+            break;
+          case 1: DelayTimeAnimation = rx_frame.data.u8[1]; //Czas animacji
+            break;
+          case 10: SmoothJumpHSV = rx_frame.data.u8[1];
+            break;
+          case 11: SmoothBrightHSV = rx_frame.data.u8[1];
+            break;
+
+          case 20: RainbowJumpAllHSV = rx_frame.data.u8[1];
+            break;
+          case 21: RainbowJumpOneHSV = rx_frame.data.u8[1];
+            break;
+          case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //jasnosc
+            break;
+        }
+      }
+    }
+
+    if(rx_frame.MsgID == 0x011) {	//Informacja tylko do sufitu RGB www
 
       switch(rx_frame.FIR.B.DLC) {   //Sprawdzanie długości ciągu
         case 3:
@@ -494,6 +538,6 @@ void setup() {
 
 void loop() {
   Can_reader(); //Odbieranie danych z Cana
-
+  HeadVoidAnimation();  //Animacje
   WhichLedStripUpdate();  //Które paski led aktualizować?
 }
