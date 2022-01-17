@@ -97,7 +97,7 @@ uint8_t HoldStateButton[1] = { 0 };
 
 void setup() {
   //Serial.begin(115200);
-  CAN_cfg.speed = CAN_SPEED_250KBPS; //CAN_SPEED_125KBPS;
+  CAN_cfg.speed = CAN_SPEED_125KBPS; //CAN_SPEED_125KBPS;
   CAN_cfg.tx_pin_id = GPIO_NUM_22;
   CAN_cfg.rx_pin_id = GPIO_NUM_23;
   CAN_cfg.rx_queue = xQueueCreate(rx_queue_size, sizeof(CAN_frame_t));
@@ -121,7 +121,7 @@ void setup() {
 }
 
 void loop() {
-  Can_reader();
+  //Can_reader();
   LightButton();
   //wifi
   WiFiClient client = server.available();
@@ -162,10 +162,7 @@ void loop() {
             client.println("</body></html>");
             client.println();
 
-            // Request sample: /?lsone=r201g32b255&
-            // Red = 201 | Green = 32 | Blue = 255
-
-              //Œwiat³o w pokoju
+             //Œwiat³o w pokoju
             if (header.indexOf("GET /?light=") >= 0) {	//random led /?light=s1&
 
               int ledinfoS = header.indexOf('s');
@@ -198,9 +195,9 @@ void loop() {
                   int ledinfoB = header.indexOf('b');
                   int ledinfoC = header.indexOf('&');
 
-                  String redString = header.substring(ledinfoR + 1, ledinfoG);
+                  String redString   = header.substring(ledinfoR + 1, ledinfoG);
                   String greenString = header.substring(ledinfoG + 1, ledinfoB);
-                  String blueString = header.substring(ledinfoB + 1, ledinfoC);
+                  String blueString  = header.substring(ledinfoB + 1, ledinfoC);
 
                   KolorujCalySufit(redString.toInt(), greenString.toInt(), blueString.toInt());
                 }else

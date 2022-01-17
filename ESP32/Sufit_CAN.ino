@@ -453,18 +453,18 @@ void Can_reader() //Odbieranie danych z Cana
         switch (rx_frame.data.u8[0]) {
           case 0: ModeAnimation = rx_frame.data.u8[1];  //Typ animacji  //0 0 - wylaczenie
             break;
-          case 1: DelayTimeAnimation = rx_frame.data.u8[1]; //Czas animacji
+          case 1: DelayTimeAnimation = rx_frame.data.u8[1]; //default 20 // Czas powtórzenia animacji
             break;
-          case 10: SmoothJumpHSV = rx_frame.data.u8[1];
+          case 10: SmoothJumpHSV = rx_frame.data.u8[1]*5;   //default 10
             break;
-          case 11: SmoothBrightHSV = rx_frame.data.u8[1];
+          case 11: SmoothBrightHSV = rx_frame.data.u8[1]; //default 255 //jasność
             break;
 
-          case 20: RainbowJumpAllHSV = rx_frame.data.u8[1];
+          case 20: RainbowJumpAllHSV = rx_frame.data.u8[1]*5;   //default 10  //predkosc przesuwania kolorów
             break;
-          case 21: RainbowJumpOneHSV = rx_frame.data.u8[1];
+          case 21: RainbowJumpOneHSV = rx_frame.data.u8[1]*5;   //default 100 //o ile jednostek więcej ma świecić kolejny led
             break;
-          case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //jasnosc
+          case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //default 255 //jasność
             break;
         }
       }
@@ -506,7 +506,7 @@ void Can_reader() //Odbieranie danych z Cana
 
 void setup() {
   //CAN
-  CAN_cfg.speed = CAN_SPEED_250KBPS; //CAN_SPEED_125KBPS;
+  CAN_cfg.speed = CAN_SPEED_125KBPS; //CAN_SPEED_125KBPS;
   CAN_cfg.tx_pin_id = GPIO_NUM_23;
   CAN_cfg.rx_pin_id = GPIO_NUM_22;
   CAN_cfg.rx_queue = xQueueCreate(10, sizeof(CAN_frame_t));
