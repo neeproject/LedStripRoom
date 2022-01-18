@@ -239,7 +239,7 @@ void KolorowanieTasmOdSrodkaO(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, ui
   }
 }
 
-void KolorowanieTasmOdSrodkaH(int ColorR, int ColorG, int ColorB, int NrLedStrip, int NrLedInStrip) {
+void KolorowanieTasmOdSrodkaH(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip, int NrLedInStrip) {
   switch (NrLedStrip) {
   case 37:
     KolorowanieTasmOdSrodkaO(ColorR, ColorG, ColorB, 35, NrLedInStrip);
@@ -278,7 +278,7 @@ uint8_t SmoothSaturationHSV = 255;    //nasycenie HSV / 0-białe / 255-mocny kol
 uint8_t SmoothBrightHSV = 255;        //jasność HSV
 
 void AnimateSmoothAll() {
-  SmoothColorHSV += (SmoothJumpHSV*10);
+  SmoothColorHSV += (SmoothJumpHSV * 10);
   uint32_t ChangeColorSmoothHSV = lsu1.ColorHSV(SmoothColorHSV, SmoothSaturationHSV, SmoothBrightHSV);  //przeskok koloru,nasycenie,jasność
   for (uint8_t i = 0; i < 12; i++) {
     KolorowanieTasmHSV(ChangeColorSmoothHSV, 0, 0, i);
@@ -342,32 +342,132 @@ void AnimateRainbow(uint16_t StartColorRainbowHSV, uint8_t RainbowBrightHSV, uin
 void AnimateRainbowSyncAll() {
 
   AnimateRainbow(RainbowColorStartAllHSV, RainbowBrightAllHSV, 0);
-  AnimateRainbow(RainbowColorStartAllHSV + (8*RainbowJumpOneHSV),  RainbowBrightAllHSV, 1);
+  AnimateRainbow(RainbowColorStartAllHSV + (8 * RainbowJumpOneHSV), RainbowBrightAllHSV, 1);
   AnimateRainbow(RainbowColorStartAllHSV + (16 * RainbowJumpOneHSV), RainbowBrightAllHSV, 2);
   AnimateRainbow(RainbowColorStartAllHSV + (16 * RainbowJumpOneHSV), RainbowBrightAllHSV, 3);
-  AnimateRainbow(RainbowColorStartAllHSV + (8 * RainbowJumpOneHSV),  RainbowBrightAllHSV, 4);
-  AnimateRainbow(RainbowColorStartAllHSV,  RainbowBrightAllHSV, 5);
+  AnimateRainbow(RainbowColorStartAllHSV + (8 * RainbowJumpOneHSV), RainbowBrightAllHSV, 4);
+  AnimateRainbow(RainbowColorStartAllHSV, RainbowBrightAllHSV, 5);
 
-  RainbowColorStartAllHSV += RainbowJumpAllHSV;   
+  RainbowColorStartAllHSV += RainbowJumpAllHSV;
 }
 
-/*
 
-for ( uint16_t i= 0 ; i<liczbaLED; i++) {
-    uint16_t odcień = pierwszy_odcień + (i * powtórzenia * 65536 ) / numLEDs;
-    uint32_t color = ColorHSV (odcień, nasycenie, jasność);
-    if (gammify) kolor = gamma32 (kolor);
-    setPixelColor (i, kolor);
+//AnimateDisappeLed
+uint32_t DisappeNewPixelPreviousTime = 0;  //mills wcześniejszy
+uint16_t DisappeNewPixelDelayTime = 1000; //Co ile dodawać nowego leda i usuwać starego
+uint32_t DisappePreviousTime = 0;  //mills wcześniejszy
+uint16_t DisappeDelayTime = 250; //Co ile ściemniać i rozjaśniać
 
- for (uint16_t i = 0; i < strip.numPixels(); i++) {
-    uint8_t LEDr = (strip.getPixelColor(i) >> 16);
-    uint8_t LEDg = (strip.getPixelColor(i) >> 8);
-    uint8_t LEDb = (strip.getPixelColor(i));
-    strip.setPixelColor(i, LEDr, LEDg, LEDb);
+uint16_t DisappeColorArray[36];   //Kolor danego leda
+uint8_t DisappeColorBrightArray[36];    //Jasność leda
+uint8_t DisappeColorBrightDirection[36];  //Kierunek jasności, ściemniać czy rozjaśniać
+uint8_t DisappeColorBrightMaxValue = 249; //Maksymalna jasność leda.
+uint8_t DisappeLedStrip[36];      //Który led
+uint8_t DisappeLedInStrip[36];    //Który pasek
+
+uint8_t DisappeLedActive = 35;      //Liczba diod w animacji, można zmieniać kodem html
+uint8_t DisappeLedActiveCount = 0;  //Licznik o którego leda chodzi w danej chwili
+uint8_t DisappeColorRandom = 1;   //Czy kolor ledów losowany, czy ustalony z góry
+
+
+void AnimateDisappeLedSet(uint8_t DisappeActualLed) {
+  uint32_t DisappeColorHSV = lsu1.ColorHSV(DisappeColorArray[DisappeActualLed], 255, DisappeColorBrightArray[DisappeActualLed]);
+
+  KolorowanieTasmHSV(DisappeColorHSV, DisappeLedInStrip[DisappeActualLed], 1, DisappeLedStrip[DisappeActualLed] * 2);
+  KolorowanieTasmHSV(DisappeColorHSV, DisappeLedInStrip[DisappeActualLed], 1, DisappeLedStrip[DisappeActualLed]*2+1);
+}
+
+void AnimateDisappeLed() {
+  if ((millis() - DisappeNewPixelPreviousTime) > DisappeNewPixelDelayTime) {  //wykonuj co 1000ms.
+    DisappeNewPixelPreviousTime = millis();
+    
+    DisappeLedStrip[DisappeLedActiveCount] = random(0, 5);  //Losowanie paska led dla diody
+
+    switch (DisappeLedStrip[DisappeLedActiveCount]) {   //Losowanie diody dla paska led
+      case 0: case 5:
+          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 119);  //Losowanie diody
+        break;
+      case 1: case 4:
+          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 103);  //Losowanie diody
+        break;
+      case 2: case 3:
+          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 87);  //Losowanie diody
+        break;
+    }
+    if (DisappeColorRandom) {
+      DisappeColorArray[DisappeLedActiveCount] = random(0, 65534);  //Losowanie koloru diody
+    }
+    DisappeColorBrightDirection[DisappeLedActiveCount] = 1;   //Ustawienie kierunku rozjaśniania leda
+
+    if (DisappeLedActiveCount < DisappeLedActive) {
+      DisappeLedActiveCount++;
+    }else {
+      DisappeLedActiveCount = 0;
+    }
   }
 
-  hue = first_hue + (i * reps * 65536) / numLEDs;
-*/
+  if ((millis() - DisappePreviousTime) > DisappeDelayTime) {  //wykonuj co 250ms.
+    DisappePreviousTime = millis();
+    
+    for (uint8_t i = 0; i < DisappeLedActive; i++){
+
+      if (DisappeColorBrightDirection[i]) { //Dodawanie lub odejmowanie jasności leda
+        if (DisappeColorBrightArray[i] < 50) {  //Jeden led będzie świecił 17500ms = (250ms*50+250ms*20); Max świecenie to 36000.
+          DisappeColorBrightArray[i] += 1;
+        }else {
+          DisappeColorBrightArray[i] += 10;
+        }
+      }
+      else {
+        if (DisappeColorBrightArray[i] < 50) {
+          DisappeColorBrightArray[i] -= 1;
+        }else {
+          DisappeColorBrightArray[i] -= 10;
+        }
+      }
+      
+      AnimateDisappeLedSet(i);//kolorowanie leda
+
+      if (DisappeColorBrightArray[i] >= DisappeColorBrightMaxValue) {  //jeśli osiągnięto odpowiednią jasność
+        DisappeColorBrightDirection[DisappeLedActiveCount] = 0;
+      }
+    } //zamknięcie for
+  } //zamknięcie ifa co 250ms
+
+}
+
+
+//Ambilight \/ \/ \/
+
+uint32_t AmbilightTVArrayRGB[98];
+uint8_t AmbilightUpdateCountLed = 0;
+
+void AmbilightTV(uint8_t NrLedAmbi, uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {
+
+  AmbilightTVArrayRGB[NrLedAmbi] = lsu1.Color(ColorR, ColorG, ColorB);
+  AmbilightUpdateCountLed++;
+
+  if (NrLedAmbi == 97 && AmbilightUpdateCountLed > 96){
+      AmbilightUpdateCountLed = 0;
+
+      for (uint8_t i = 0; i < 98; i++) {
+        uint8_t ii = 97 - i;
+        lsu1.setPixelColor(10 + ii, AmbilightTVArrayRGB[i]);
+        lsu2.setPixelColor(10 + ii, AmbilightTVArrayRGB[i]);
+      }
+      
+      lsu1.show();
+      lsu2.show();
+  }else
+    //if ERROR , brak odbieranych danych
+  if (AmbilightUpdateCountLed > 250) {
+    AmbilightUpdateCountLed = 0;
+    lsu1.setPixelColor(0,255,0,0);
+    lsu1.show();
+  }
+}
+
+//Ambilight /\ /\ /\
 
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=GŁÓWNE=VOIDY=======================\/
@@ -433,7 +533,16 @@ void HeadVoidAnimation() {
       break;
     }
   }
+
+  //Animacje z delay w void 
+
+  switch (ModeAnimation) {
+  case 3: AnimateDisappeLed();
+    break;
+  }
+
 }
+
 
 
 //==================================================================================\/
@@ -447,29 +556,41 @@ void Can_reader() //Odbieranie danych z Cana
 
   if(xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
 
-    if (rx_frame.MsgID == 0x010) {	//Informacja tylko do sufitu RGB www
+    if (rx_frame.MsgID == 0x010) {	//Informacja tylko do sufitu RGB www - Animacje
       switch (rx_frame.FIR.B.DLC) {   //Sprawdzanie długości ciągu
       case 2:
         switch (rx_frame.data.u8[0]) {
-          case 0: ModeAnimation = rx_frame.data.u8[1];  //Typ animacji  //0 0 - wylaczenie
+          case 0: ModeAnimation = rx_frame.data.u8[1];  //Typ animacji  //0 0 - wylaczenie  //0 1 =Animacja 1 //0 2=Animacja 2
             break;
-          case 1: DelayTimeAnimation = rx_frame.data.u8[1]; //default 20 // Czas powtórzenia animacji
+          case 1: DelayTimeAnimation = rx_frame.data.u8[1]; //default 20 // Czas powtórzenia animacji 1, 2, gdzie główny delay jest
             break;
-          case 10: SmoothJumpHSV = rx_frame.data.u8[1]*5;   //default 10
+          //animacja 1
+          case 10: SmoothJumpHSV = rx_frame.data.u8[1]*5;   //default 10  //skok kolorów
             break;
-          case 11: SmoothBrightHSV = rx_frame.data.u8[1]; //default 255 //jasność
+          case 11: SmoothBrightHSV = rx_frame.data.u8[1]; //default 255 //jasność animacji 1
             break;
-
-          case 20: RainbowJumpAllHSV = rx_frame.data.u8[1]*5;   //default 10  //predkosc przesuwania kolorów
+          //animacja 2
+          case 20: RainbowJumpAllHSV = rx_frame.data.u8[1]*5;   //default 10  //predkosc przesuwania kolorów animacji 2
             break;
-          case 21: RainbowJumpOneHSV = rx_frame.data.u8[1]*5;   //default 100 //o ile jednostek więcej ma świecić kolejny led
+          case 21: RainbowJumpOneHSV = rx_frame.data.u8[1]*5;   //default 100 //o ile jednostek więcej ma świecić kolejny led animacji 2
             break;
-          case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //default 255 //jasność
+          case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //default 255 //jasność animacji 2
+            break;
+          //animacja 3
+          case 30: DisappeLedActive = rx_frame.data.u8[1];   //default 35 //ilość led w animacji 3
+            break;
+          case 31: DisappeNewPixelDelayTime = rx_frame.data.u8[1]*100;   //default 10*100=1000ms //Czas co ile dodawać nową diodę
+            break;
+          case 32: DisappeDelayTime = rx_frame.data.u8[1]*10;   //default 25*10=250ms //Czas co ile aktualizować jasność diody
+            break;
+          case 33: DisappeColorBrightMaxValue = rx_frame.data.u8[1];   //default 249 //Jasność max animacji 3
+            break;
+          case 34: DisappeColorRandom = rx_frame.data.u8[1];   //def 1 //Czy kolor animacji 3 ma być losowany? Jeśli nie to kurwa co?
             break;
         }
       }
     }
-
+    
     if(rx_frame.MsgID == 0x011) {	//Informacja tylko do sufitu RGB www
 
       switch(rx_frame.FIR.B.DLC) {   //Sprawdzanie długości ciągu
@@ -491,7 +612,16 @@ void Can_reader() //Odbieranie danych z Cana
     if (rx_frame.MsgID == 0x012) {	//Informacja tylko do włącznika światła
 
     }
-
+    if (rx_frame.MsgID == 0x020) {	//AmbilightTV
+      if (ModeAnimation==20) {
+        AmbilightTV(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2], rx_frame.data.u8[3]); //Nr_leda + RGB
+      }
+    }
+    if (rx_frame.MsgID == 0x025) {	//Music
+      if (ModeAnimation == 25) {
+        //Music(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2], rx_frame.data.u8[3]); //Animate 
+      }
+    }
     if (rx_frame.MsgID == 0x020) {	//Informacja Animacji
 
     }
@@ -538,6 +668,6 @@ void setup() {
 
 void loop() {
   Can_reader(); //Odbieranie danych z Cana
-  HeadVoidAnimation();  //Animacje
+  HeadVoidAnimation();  //Animacje z delay, ale jest na końcu if do animacji bez delay
   WhichLedStripUpdate();  //Które paski led aktualizować?
 }
