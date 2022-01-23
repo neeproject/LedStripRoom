@@ -88,6 +88,17 @@ void HeadAnimation(uint8_t StyleAnimation, uint8_t ValueAnimation) {
   ESP32Can.CANWriteFrame(&tx_frame);
 }
 
+void KolorujWlacznik(uint8_t ButtonColorHSV, uint16_t ButtonBright) {  //RGB+Nr_Paska+Nr_Led
+  CAN_frame_t tx_frame;
+  tx_frame.FIR.B.FF = CAN_frame_std;
+  tx_frame.MsgID = 0x012;
+  tx_frame.FIR.B.DLC = 2;
+  tx_frame.data.u8[0] = ButtonColorHSV;
+  tx_frame.data.u8[1] = ButtonBright;
+  //delay(1);
+  ESP32Can.CANWriteFrame(&tx_frame);
+}
+
 
 uint32_t CurrentTime = millis();
 uint32_t previousTime = 0;
@@ -283,23 +294,31 @@ void loop() {
 
 void LightButton() {  //W³¹cznik œwiat³a w pokoju
 
-  if (digitalRead(39) == 1) {
+  if (digitalRead(39) == 1) { //Jeœli przycisk wciœniêty
     if (HoldStateButton[0] == 0) {  //Czy pêlta by³a ju¿ wykonana?
       HoldStateButton[0] = 1;       //Zaznacz wykonanie pêtli
       HoldTimeButton[0] = millis(); //Zapisz czas zaczêcia wykonywania pêtli
+      KolorujWlacznik(0,10);
     }
+
+    if ((millis() - HoldTimeButton[0]) == 2400) {  //Czy by³ trzymany wiêcej ni¿ 2400ms?
+      KolorujWlacznik(213, 10);
+    }else if ((millis() - HoldTimeButton[0]) == 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
+      KolorujWlacznik(170, 10);
+    }
+
   }
   else
     if (HoldStateButton[0] == 1) {  //Czy przycisk by³ ju¿ trzymany? Tak
       if (digitalRead(39) == 0) {   //Czy przycisk jest ju¿ puszczony?
         HoldStateButton[0] = 0;     //Zaznacz ¿e jest ju¿ puszczony
-
-        if ((millis() - HoldTimeButton[0]) > 3500) {  //Czy by³ trzymany wiêcej ni¿ 3500ms?
+        KolorujWlacznik(0, 0);
+        if ((millis() - HoldTimeButton[0]) > 2400) {  //Czy by³ trzymany wiêcej ni¿ 2400ms?
           KolorujCalySufit(0, 0, 0);
         }
         else
 
-          if ((millis() - HoldTimeButton[0]) > 1600) {  //Czy by³ trzymany wiêcej ni¿ 1600ms?
+          if ((millis() - HoldTimeButton[0]) > 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
             if (headwentinroom == 0) { headwentinroom = 1; }  //Zmieñ stan wentylatora
             else
               if (headwentinroom == 1) { headwentinroom = 0; }  //Zmieñ stan wentylatora

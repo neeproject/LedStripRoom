@@ -768,7 +768,6 @@ void HeadVoidAnimation() {
 
 }
 
-
 //==================================================================================\/
 //=======================================CAN=READ===================================\/
 //==================================================================================\/
@@ -837,7 +836,9 @@ void Can_reader() //Odbieranie danych z Cana
     }
 
     if (rx_frame.MsgID == 0x012) {	//Informacja tylko do włącznika światła
-
+      uint32_t ButtonColor = lsu1.ColorHSV(rx_frame.data.u8[0]*255, 255, rx_frame.data.u8[1]);
+      KolorowanieTasmHSV(ButtonColor, 0, 1, 12);
+      KolorowanieTasmHSV(ButtonColor, 0, 2, 12);
     }
     if (rx_frame.MsgID == 0x020) {	//AmbilightTV
       if (ModeAnimation==20) {
