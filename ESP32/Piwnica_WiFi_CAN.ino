@@ -20,8 +20,8 @@ WiFiServer server(80);
 
 String header;
 
-int headlightinroom = 0;  //Stan œwiat³a
-int headwentinroom = 0;   //Stan wentylatora
+int headlightinroom = 1;  //Stan œwiat³a
+int headwentinroom = 1;   //Stan wentylatora
 
 void KolorujCalySufit(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {  //RGB
   CAN_frame_t tx_frame;
@@ -122,6 +122,9 @@ void setup() {
 
   pinMode(32, OUTPUT);	//swiatlo
   pinMode(33, OUTPUT);	//went
+
+  digitalWrite(32, 1);  //Zgas swiatlo
+  digitalWrite(33, 1);  //Wylacz went
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -306,34 +309,30 @@ void LightButton() {  //W³¹cznik œwiat³a w pokoju
     }else if ((millis() - HoldTimeButton[0]) == 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
       KolorujWlacznik(170, 10);
     }
-
   }
-  else
-    if (HoldStateButton[0] == 1) {  //Czy przycisk by³ ju¿ trzymany? Tak
-      if (digitalRead(39) == 0) {   //Czy przycisk jest ju¿ puszczony?
-        HoldStateButton[0] = 0;     //Zaznacz ¿e jest ju¿ puszczony
-        KolorujWlacznik(0, 0);
-        if ((millis() - HoldTimeButton[0]) > 2400) {  //Czy by³ trzymany wiêcej ni¿ 2400ms?
-          KolorujCalySufit(0, 0, 0);
+  else if (HoldStateButton[0] == 1) {  //Czy przycisk by³ ju¿ trzymany? Tak
+    if (digitalRead(39) == 0) {   //Czy przycisk jest ju¿ puszczony?
+      HoldStateButton[0] = 0;     //Zaznacz ¿e jest ju¿ puszczony
+      KolorujWlacznik(0, 0);
+      if ((millis() - HoldTimeButton[0]) > 2400) {  //Czy by³ trzymany wiêcej ni¿ 2400ms?
+        KolorujCalySufit(0, 0, 0);
+      }
+      else
+        if ((millis() - HoldTimeButton[0]) > 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
+          if (headwentinroom == 0) { headwentinroom = 1; }  //Zmieñ stan wentylatora
+          else
+            if (headwentinroom == 1) { headwentinroom = 0; }  //Zmieñ stan wentylatora
+          digitalWrite(33, headwentinroom);   //Wyœlij stan wentylatora
         }
         else
-
-          if ((millis() - HoldTimeButton[0]) > 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
-            if (headwentinroom == 0) { headwentinroom = 1; }  //Zmieñ stan wentylatora
+          if ((millis() - HoldTimeButton[0]) > 20) {  //Czy by³ trzymany wiêcej ni¿ 20ms?
+            if (headlightinroom == 0) { headlightinroom = 1; }  //Zgaœ lub zapal œwiat³o
             else
-              if (headwentinroom == 1) { headwentinroom = 0; }  //Zmieñ stan wentylatora
-            digitalWrite(33, headwentinroom);   //Wyœlij stan wentylatora
+              if (headlightinroom == 1) { headlightinroom = 0; }  //Zgaœ lub zapal œwiat³o
+            digitalWrite(32, headlightinroom);      //Wyœlij stan œwiat³a
           }
-          else
-
-            if ((millis() - HoldTimeButton[0]) > 20) {  //Czy by³ trzymany wiêcej ni¿ 20ms?
-              if (headlightinroom == 0) { headlightinroom = 1; }  //Zgaœ lub zapal œwiat³o
-              else
-                if (headlightinroom == 1) { headlightinroom = 0; }  //Zgaœ lub zapal œwiat³o
-              digitalWrite(32, headlightinroom);      //Wyœlij stan œwiat³a
-            }
-      }
     }
+  }
 }
 
 

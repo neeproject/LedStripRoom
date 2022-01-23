@@ -570,19 +570,19 @@ void AnimateRainbowSyncAll() {
 
 //Początek animacji AnimateDisappeLed
 uint32_t DisappeNewPixelPreviousTime = 0;  //mills wcześniejszy
-uint16_t DisappeNewPixelDelayTime = 1000; //Co ile dodawać nowego leda i usuwać starego
+uint16_t DisappeNewPixelDelayTime = 1200; //Co ile dodawać nowego leda i usuwać starego
 uint32_t DisappePreviousTime = 0;  //mills wcześniejszy
-uint16_t DisappeDelayTime = 250; //Co ile ściemniać i rozjaśniać
+uint16_t DisappeDelayTime = 200; //Co ile ściemniać i rozjaśniać
 uint16_t DisappeLedColorStatic = 0;
 
 uint16_t DisappeColorArray[36];   //Kolor danego leda
 uint8_t DisappeColorBrightArray[36];    //Jasność leda
 uint8_t DisappeColorBrightDirection[36];  //Kierunek jasności, ściemniać czy rozjaśniać
-uint8_t DisappeColorBrightMaxValue = 249; //Maksymalna jasność leda.
+uint8_t DisappeColorBrightMaxValue = 239; //Maksymalna jasność leda.
 uint8_t DisappeLedStrip[36];      //Który led
 uint8_t DisappeLedInStrip[36];    //Który pasek
 
-uint8_t DisappeLedActive = 35;      //Liczba diod w animacji, można zmieniać kodem html
+uint8_t DisappeLedActive = 30;      //Liczba diod w animacji, można zmieniać kodem html
 uint8_t DisappeLedActiveCount = 0;  //Licznik o którego leda chodzi w danej chwili
 uint8_t DisappeColorRandom = 1;   //Czy kolor ledów losowany, czy ustalony z góry
 
@@ -594,20 +594,27 @@ void AnimateDisappeLedSet(uint8_t DisappeActualLed) {
 }
 
 void AnimateDisappeLed() {
-  if ((millis() - DisappeNewPixelPreviousTime) > DisappeNewPixelDelayTime) {  //wykonuj co 1000ms.
+  if ((millis() - DisappeNewPixelPreviousTime) > DisappeNewPixelDelayTime) {  //wykonuj co 1200ms.
     DisappeNewPixelPreviousTime = millis();
     
-    DisappeLedStrip[DisappeLedActiveCount] = random(0, 5);  //Losowanie paska led dla diody
+    if (DisappeLedActiveCount < DisappeLedActive) {
+      DisappeLedActiveCount++;
+    }
+    else {
+      DisappeLedActiveCount = 0;
+    }
+
+    DisappeLedStrip[DisappeLedActiveCount] = random(0, 6);  //Losowanie paska led dla diody
 
     switch (DisappeLedStrip[DisappeLedActiveCount]) {   //Losowanie diody dla paska led
       case 0: case 5:
-          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 119);  //Losowanie diody
+          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 120);  //Losowanie diody
         break;
       case 1: case 4:
-          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 103);  //Losowanie diody
+          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 104);  //Losowanie diody
         break;
       case 2: case 3:
-          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 87);  //Losowanie diody
+          DisappeLedInStrip[DisappeLedActiveCount] = random(0, 88);  //Losowanie diody
         break;
     }
     if (DisappeColorRandom) {
@@ -616,30 +623,32 @@ void AnimateDisappeLed() {
     else {
       DisappeColorArray[DisappeLedActiveCount] = DisappeLedColorStatic;
     }
-    DisappeColorBrightDirection[DisappeLedActiveCount] = 1;   //Ustawienie kierunku rozjaśniania leda
+    DisappeColorBrightDirection[DisappeLedActiveCount] = 0;   //Ustawienie kierunku rozjaśniania leda
+    DisappeColorBrightArray[DisappeLedActiveCount] = 0; //jasność na 0
 
-    if (DisappeLedActiveCount < DisappeLedActive) {
-      DisappeLedActiveCount++;
-    }else {
-      DisappeLedActiveCount = 0;
-    }
-  }
+  }else
 
-  if ((millis() - DisappePreviousTime) > DisappeDelayTime) {  //wykonuj co 250ms.
+  if ((millis() - DisappePreviousTime) > DisappeDelayTime) {  //wykonuj co 200ms.
     DisappePreviousTime = millis();
     
-    for (uint8_t i = 0; i < DisappeLedActive; i++){
+    for (uint8_t i = 0; i <= DisappeLedActive; i++){
+      if (DisappeColorBrightArray[i] > DisappeColorBrightMaxValue) {  //jeśli osiągnięto odpowiednią jasność
+        DisappeColorBrightDirection[i] = 1;
+      }
 
-      if (DisappeColorBrightDirection[i]) { //Dodawanie lub odejmowanie jasności leda
-        if (DisappeColorBrightArray[i] < 50) {  //Jeden led będzie świecił 17500ms = (250ms*50+250ms*20); Max świecenie to 36000.
+      if (DisappeColorBrightDirection[i]==0) { //Dodawanie lub odejmowanie jasności leda
+        if (DisappeColorBrightArray[i] < 40) {  //Jeden led będzie świecił 17500ms = (250ms*50+250ms*20); Max świecenie to 36000.
           DisappeColorBrightArray[i] += 1;
         }else {
           DisappeColorBrightArray[i] += 10;
         }
       }
-      else {
-        if (DisappeColorBrightArray[i] < 50) {
-          DisappeColorBrightArray[i] -= 1;
+      else if (DisappeColorBrightDirection[i]==1) {
+        if (DisappeColorBrightArray[i] < 40) {
+          if (DisappeColorBrightArray[i] > 0) {
+            DisappeColorBrightArray[i] -= 1;
+          }
+          
         }else {
           DisappeColorBrightArray[i] -= 10;
         }
@@ -647,12 +656,8 @@ void AnimateDisappeLed() {
       
       AnimateDisappeLedSet(i);//kolorowanie leda
 
-      if (DisappeColorBrightArray[i] >= DisappeColorBrightMaxValue) {  //jeśli osiągnięto odpowiednią jasność
-        DisappeColorBrightDirection[DisappeLedActiveCount] = 0;
-      }
     } //zamknięcie for
   } //zamknięcie ifa co 250ms
-
 }
 
 
@@ -691,6 +696,8 @@ void AmbilightTV(uint8_t NrLedAmbi, uint8_t ColorR, uint8_t ColorG, uint8_t Colo
 void Music(uint8_t MusicAnimation, uint8_t MusicVolume, uint8_t MusicColor) {
   
   uint32_t MusicAnimationHSV = lsu1.ColorHSV(MusicColor*255, 255, 255); // Kolor, nasycenie, jasność
+
+  KolorujCalySufit(0,0,0);  //Wyczyszczenie sufitu
 
   KolorowanieTasmHSVWhichWzorek(MusicAnimationHSV, 0, MusicVolume, MusicAnimation);
 }
@@ -800,7 +807,7 @@ void Can_reader() //Odbieranie danych z Cana
           case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //default 255 //jasność animacji 2
             break;
           //animacja 3
-          case 30: DisappeLedActive = rx_frame.data.u8[1];   //default 35 //ilość led w animacji 3
+          case 30: DisappeLedActive = rx_frame.data.u8[1];   //default 30 //ilość led w animacji 3
             break;
           case 31: DisappeNewPixelDelayTime = rx_frame.data.u8[1]*100;   //default 10*100=1000ms //Czas co ile dodawać nową diodę
             break;
@@ -847,13 +854,10 @@ void Can_reader() //Odbieranie danych z Cana
     }
 
     //Music (25=Sufit / 26=Fan / 27=Karnisz / 28=Bed / 29=Grzejnik / 30=Szafa / 31=Szafka
-    if (rx_frame.MsgID == 0x025) {	
+    if ((rx_frame.MsgID > 0x029) && (rx_frame.MsgID < 0x040)) {
       if (ModeAnimation == 25) {
         Music(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2]); //Animate, Volume, Color 
       }
-    }
-    if (rx_frame.MsgID == 0x020) {	//Informacja Animacji
-
     }
   }
 
