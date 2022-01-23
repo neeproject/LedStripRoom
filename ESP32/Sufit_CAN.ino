@@ -276,10 +276,12 @@ void KolorowanieTasmOdSrodkaH(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, ui
   }
 }
 
+
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=ANIMACJE=HSV=======================\/
 //==================================================================================\/
 
+//Jeden pasek w jednej listwie
 void KolorowanieTasmHSV(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
   case 0:   lsu1.fill(ColorFillHSV, FirstLedHSV, CountLedHSV);  break;
@@ -300,6 +302,7 @@ void KolorowanieTasmHSV(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t Co
   ListUpdateLedStrip[NrLedStrip] = 1;
 }
 
+//Dwa paski w jednej listwie
 void KolorowanieTasmHSVDualLed(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
   case 0:   
@@ -329,50 +332,169 @@ void KolorowanieTasmHSVDualLed(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint
   }
 }
 
+//Wzorki początkowe
 void KolorowanieTasmHSVWzorkiWood(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
-  case 6:    //    %OO [] OOO
+  case 20:    //    %OO [] OOO   //Na jednym pasku od dwóch stron na raz
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 0);
     KolorowanieTasmHSVDualLed(ColorFillHSV, (119 - CountLedHSV - FirstLedHSV), CountLedHSV, 0);
     break;
-  case 7:    //    O%O [] OOO
+  case 21:    //    O%O [] OOO
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 1);
     KolorowanieTasmHSVDualLed(ColorFillHSV, (103 - CountLedHSV - FirstLedHSV), CountLedHSV, 1);
     break;
-  case 8:    //    OO% [] OOO
+  case 22:    //    OO% [] OOO
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 2);
     KolorowanieTasmHSVDualLed(ColorFillHSV, (87 - CountLedHSV - FirstLedHSV), CountLedHSV, 2);
     break;
-  case 9:    //    OOO [] %OO
+  case 23:    //    OOO [] %OO
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 3);
     KolorowanieTasmHSVDualLed(ColorFillHSV, (87 - CountLedHSV - FirstLedHSV), CountLedHSV, 3);
     break;
-  case 10:    //    OOO [] O%O
+  case 24:    //    OOO [] O%O
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 4);
     KolorowanieTasmHSVDualLed(ColorFillHSV, (103 - CountLedHSV - FirstLedHSV), CountLedHSV, 4);
     break;
-  case 11:    //    OOO [] OO%
+  case 25:    //    OOO [] OO%
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 5);
     KolorowanieTasmHSVDualLed(ColorFillHSV, (119 - CountLedHSV - FirstLedHSV), CountLedHSV, 5);
     break;
 
+  case 26:    //    %OO [] OOO   //Na jednym pasku od dwóch stron na raz
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 5);
+    KolorowanieTasmHSVDualLed(ColorFillHSV, (119 - CountLedHSV - FirstLedHSV), CountLedHSV, 0);
+    break;
+  case 27:    //    O%O [] OOO
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 4);
+    KolorowanieTasmHSVDualLed(ColorFillHSV, (103 - CountLedHSV - FirstLedHSV), CountLedHSV, 1);
+    break;
+  case 28:    //    OO% [] OOO
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 3);
+    KolorowanieTasmHSVDualLed(ColorFillHSV, (87 - CountLedHSV - FirstLedHSV), CountLedHSV, 2);
+    break;
+  case 29:    //    OOO [] %OO
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 2);
+    KolorowanieTasmHSVDualLed(ColorFillHSV, (87 - CountLedHSV - FirstLedHSV), CountLedHSV, 3);
+    break;
+  case 30:    //    OOO [] O%O
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 1);
+    KolorowanieTasmHSVDualLed(ColorFillHSV, (103 - CountLedHSV - FirstLedHSV), CountLedHSV, 4);
+    break;
+  case 31:    //    OOO [] OO%
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 0);
+    KolorowanieTasmHSVDualLed(ColorFillHSV, (119 - CountLedHSV - FirstLedHSV), CountLedHSV, 5);
+    break;
 
-  case 12:    //    HOO [] OOH
+  case 32:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz.
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 0);
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 5);
     break;
-  case 13:    //    OHO [] OHO
+  case 33:    //    OHO [] OHO
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 1);
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 4);
     break;
-  case 14:    //    OOH [] HOO
+  case 34:    //    OOH [] HOO
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 2);
     KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, 3);
     break;
   }
 }
 
+void KolorowanieTasmHSVWzorkiStone(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
+  switch (NrLedStrip) {
+  case 40:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz.
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 20);
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 25);
+    break;
+  case 41:    //    OHO [] OHO
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 21);
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 24);
+    break;
+  case 42:    //    OOH [] HOO
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 22);
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 23);
+    break;
 
+  case 43:  //Od środka jedna strona
+    if (CountLedHSV < 60) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV + 60, CountLedHSV, 20);   //    HOO [C] OOO
+    }
+    if (CountLedHSV < 52) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV + 52, CountLedHSV, 21);  //    OHO [C] OOO 
+    }
+    if (CountLedHSV < 44) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV + 44, CountLedHSV, 22);  //    OOH [C] OOO
+    }
+    break;	//	HHH [C] OOO
+  case 44:  //Od środka druga strona
+    if (CountLedHSV < 60) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV + 60, CountLedHSV, 25);   //    HOO [C] OOO
+    }
+    if (CountLedHSV < 52) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV + 52, CountLedHSV, 24);  //    OHO [C] OOO 
+    }
+    if (CountLedHSV < 44) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV + 44, CountLedHSV, 23);  //    OOH [C] OOO
+    }
+    break;	//	OOO [C] HHH
+
+  case 45:  //Od boku jedna strona
+    if (CountLedHSV < 60) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 20);   //    HOO [C] OOO
+    }
+    if (CountLedHSV < 52) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 21);  //    OHO [C] OOO 
+    }
+    if (CountLedHSV < 44) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 22);  //    OOH [C] OOO
+    }
+    break;	//	HHH [C] OOO
+  case 46:  //Od boku druga strona
+    if (CountLedHSV < 60) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 25);   //    HOO [C] OOO
+    }
+    if (CountLedHSV < 52) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 24);  //    OHO [C] OOO 
+    }
+    if (CountLedHSV < 44) {
+      KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 23);  //    OOH [C] OOO
+    }
+    break;	//	OOO [C] HHH
+  }
+}
+
+void KolorowanieTasmHSVWzorkiSilver(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
+  switch (NrLedStrip) {
+  case 50:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz.
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 43);
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 44);
+    break;
+  case 51:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz.
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 45);
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 46);
+    break;
+  }
+}
+
+void KolorowanieTasmHSVWhichWzorek(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
+  if (NrLedStrip > 49) {
+    KolorowanieTasmHSVWzorkiSilver(ColorFillHSV, FirstLedHSV, CountLedHSV, NrLedStrip);
+  }
+  else if (NrLedStrip > 39) {
+    KolorowanieTasmHSVWzorkiStone(ColorFillHSV, FirstLedHSV, CountLedHSV, NrLedStrip);
+  }
+  else if (NrLedStrip > 19) {
+    KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, NrLedStrip);
+  }
+  else if (NrLedStrip > 5) {
+    KolorowanieTasmHSV(ColorFillHSV, FirstLedHSV, CountLedHSV, NrLedStrip-5);
+  }
+  else if (NrLedStrip < 6) {
+    KolorowanieTasmHSVDualLed(ColorFillHSV, FirstLedHSV, CountLedHSV, NrLedStrip);
+  }
+}
+
+//Początek animacji Smooth
 uint16_t SmoothColorHSV = 0;    //0-65535 = kolor HSV
 uint16_t SmoothJumpHSV = 10;  //Przeskok koloru HSV
 uint8_t SmoothBrightHSV = 255;        //jasność HSV
@@ -385,6 +507,8 @@ void AnimateSmoothAll() {
   }
 }
 
+
+//Początek animacji Rainbow
 uint16_t RainbowColorStartAllHSV = 0;    //0-65535 = kolor HSV
 uint16_t RainbowJumpAllHSV = 10;  //To wpłynie na prędkość przejścia kolorów
 uint16_t RainbowJumpOneHSV = 100;  //Większa wartość to więcej kolorów na taśmach
@@ -431,7 +555,6 @@ void AnimateRainbow(uint16_t StartColorRainbowHSV, uint8_t RainbowBrightHSV, uin
   }
 }
 
-
 void AnimateRainbowSyncAll() {
 
   AnimateRainbow(RainbowColorStartAllHSV, RainbowBrightAllHSV, 0);
@@ -445,11 +568,12 @@ void AnimateRainbowSyncAll() {
 }
 
 
-//AnimateDisappeLed
+//Początek animacji AnimateDisappeLed
 uint32_t DisappeNewPixelPreviousTime = 0;  //mills wcześniejszy
 uint16_t DisappeNewPixelDelayTime = 1000; //Co ile dodawać nowego leda i usuwać starego
 uint32_t DisappePreviousTime = 0;  //mills wcześniejszy
 uint16_t DisappeDelayTime = 250; //Co ile ściemniać i rozjaśniać
+uint16_t DisappeLedColorStatic = 0;
 
 uint16_t DisappeColorArray[36];   //Kolor danego leda
 uint8_t DisappeColorBrightArray[36];    //Jasność leda
@@ -461,7 +585,6 @@ uint8_t DisappeLedInStrip[36];    //Który pasek
 uint8_t DisappeLedActive = 35;      //Liczba diod w animacji, można zmieniać kodem html
 uint8_t DisappeLedActiveCount = 0;  //Licznik o którego leda chodzi w danej chwili
 uint8_t DisappeColorRandom = 1;   //Czy kolor ledów losowany, czy ustalony z góry
-
 
 void AnimateDisappeLedSet(uint8_t DisappeActualLed) {
   uint32_t DisappeColorHSV = lsu1.ColorHSV(DisappeColorArray[DisappeActualLed], 255, DisappeColorBrightArray[DisappeActualLed]);
@@ -489,6 +612,9 @@ void AnimateDisappeLed() {
     }
     if (DisappeColorRandom) {
       DisappeColorArray[DisappeLedActiveCount] = random(0, 65534);  //Losowanie koloru diody
+    }
+    else {
+      DisappeColorArray[DisappeLedActiveCount] = DisappeLedColorStatic;
     }
     DisappeColorBrightDirection[DisappeLedActiveCount] = 1;   //Ustawienie kierunku rozjaśniania leda
 
@@ -530,15 +656,13 @@ void AnimateDisappeLed() {
 }
 
 
-//Ambilight \/ \/ \/
-
+//Początek animacji Ambilight \/ \/ \/
 uint32_t AmbilightTVArrayRGB[98];
 uint8_t AmbilightUpdateCountLed = 0;
 
 void AmbilightTV(uint8_t NrLedAmbi, uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {
 
   AmbilightTVArrayRGB[NrLedAmbi] = lsu1.Color(ColorR, ColorG, ColorB);
-  AmbilightUpdateCountLed++;
 
   if (NrLedAmbi == 97 && AmbilightUpdateCountLed > 96){
       AmbilightUpdateCountLed = 0;
@@ -548,19 +672,28 @@ void AmbilightTV(uint8_t NrLedAmbi, uint8_t ColorR, uint8_t ColorG, uint8_t Colo
         lsu1.setPixelColor(10 + ii, AmbilightTVArrayRGB[i]);
         lsu2.setPixelColor(10 + ii, AmbilightTVArrayRGB[i]);
       }
-      
+
       lsu1.show();
       lsu2.show();
   }else
     //if ERROR , brak odbieranych danych
   if (AmbilightUpdateCountLed > 250) {
     AmbilightUpdateCountLed = 0;
-    lsu1.setPixelColor(0,255,0,0);
-    lsu1.show();
+    KolorowanieDwochLedow(200, 0, 0, 0, 20);
+  }
+  else if(NrLedAmbi != 97){
+    AmbilightUpdateCountLed++;
   }
 }
 
-//Ambilight /\ /\ /\
+
+//Music - Animacja, Volume, Color
+void Music(uint8_t MusicAnimation, uint8_t MusicVolume, uint8_t MusicColor) {
+  
+  uint32_t MusicAnimationHSV = lsu1.ColorHSV(MusicColor*255, 255, 255); // Kolor, nasycenie, jasność
+
+  KolorowanieTasmHSVWhichWzorek(MusicAnimationHSV, 0, MusicVolume, MusicAnimation);
+}
 
 //==================================================================================\/
 //============================KOLOROWANIE=SUFITU=GŁÓWNE=VOIDY=======================\/
@@ -635,45 +768,6 @@ void HeadVoidAnimation() {
 
 }
 
-//Music
-void Music(uint8_t MusicAnimation, uint8_t MusicVolume, uint8_t MusicColor) {
-  switch (MusicAnimation) {
-    //Kolorowanie od środków  \/
-  case 0:
-    KolorujLedOdAdoZ(MusicColorR, MusicColorG, MusicColorB, 40, 0, MusicVolume); // HHH [] HHH  //od środka do brzegów z dwóch stron
-    break;
-  case 1:
-    KolorujLedOdAdoZ(MusicColorR, MusicColorG, MusicColorB, 35, 0, MusicVolume); // HHH [] 000  //od środka do brzegów
-    break;  
-  case 2:
-    KolorujLedOdAdoZ(MusicColorR, MusicColorG, MusicColorB, 36, 0, MusicVolume); // 000 [] HHH  //od środka do brzegów
-    break;
-    //Kolorowanie od brzegów do środka \/
-  case 3:
-    KolorujLedOdAdoZ(MusicColorR, MusicColorG, MusicColorB, 41, 0, MusicVolume); // HHH [] HHH  //od brzegów do środka z dwóch stron
-    break;
-  case 4:
-    KolorujLedOdAdoZ(MusicColorR, MusicColorG, MusicColorB, 37, 0, MusicVolume); // HHH [] 000  //od brzegów do środka
-    break;
-  case 5:
-    KolorujLedOdAdoZ(MusicColorR, MusicColorG, MusicColorB, 38, 0, MusicVolume); // 000 [] HHH  //od brzegów do środka
-    break;
-  case 6:
-
-    break;
-    
-    
-    
-
-    
-    
-    
-
-
-
-  }
-}
-
 
 //==================================================================================\/
 //=======================================CAN=READ===================================\/
@@ -715,8 +809,11 @@ void Can_reader() //Odbieranie danych z Cana
             break;
           case 33: DisappeColorBrightMaxValue = rx_frame.data.u8[1];   //default 249 //Jasność max animacji 3
             break;
-          case 34: DisappeColorRandom = rx_frame.data.u8[1];   //def 1 //Czy kolor animacji 3 ma być losowany? Jeśli nie to kurwa co?
+          case 34: DisappeColorRandom = rx_frame.data.u8[1];   //def 1 //Czy kolor animacji 3 ma być losowany? Jeśli nie to kurwa co? 0
             break;
+          case 35: DisappeLedColorStatic = rx_frame.data.u8[1] * 255; //Ustawianie koloru statycznego
+            break;
+           //animacja 4
         }
       }
     }
@@ -751,7 +848,7 @@ void Can_reader() //Odbieranie danych z Cana
     //Music (25=Sufit / 26=Fan / 27=Karnisz / 28=Bed / 29=Grzejnik / 30=Szafa / 31=Szafka
     if (rx_frame.MsgID == 0x025) {	
       if (ModeAnimation == 25) {
-        //Music(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2]); //Animate, Volume, Color 
+        Music(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2]); //Animate, Volume, Color 
       }
     }
     if (rx_frame.MsgID == 0x020) {	//Informacja Animacji
