@@ -304,9 +304,9 @@ void LightButton() {  //W³¹cznik œwiat³a w pokoju
       KolorujWlacznik(0,10);
     }
 
-    if ((millis() - HoldTimeButton[0]) == 2400) {  //Czy by³ trzymany wiêcej ni¿ 2400ms?
+    if ((millis() - HoldTimeButton[0]) == 2000) {  //Czy by³ trzymany wiêcej ni¿ 2000ms?
       KolorujWlacznik(213, 10);
-    }else if ((millis() - HoldTimeButton[0]) == 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
+    }else if ((millis() - HoldTimeButton[0]) == 1000) {  //Czy by³ trzymany wiêcej ni¿ 1000ms?
       KolorujWlacznik(170, 10);
     }
   }
@@ -314,11 +314,11 @@ void LightButton() {  //W³¹cznik œwiat³a w pokoju
     if (digitalRead(39) == 0) {   //Czy przycisk jest ju¿ puszczony?
       HoldStateButton[0] = 0;     //Zaznacz ¿e jest ju¿ puszczony
       KolorujWlacznik(0, 0);
-      if ((millis() - HoldTimeButton[0]) > 2400) {  //Czy by³ trzymany wiêcej ni¿ 2400ms?
+      if ((millis() - HoldTimeButton[0]) > 2000) {  //Czy by³ trzymany wiêcej ni¿ 2000ms?
         KolorujCalySufit(0, 0, 0);
       }
       else
-        if ((millis() - HoldTimeButton[0]) > 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
+        if ((millis() - HoldTimeButton[0]) > 1000) {  //Czy by³ trzymany wiêcej ni¿ 1000ms?
           if (headwentinroom == 0) { headwentinroom = 1; }  //Zmieñ stan wentylatora
           else
             if (headwentinroom == 1) { headwentinroom = 0; }  //Zmieñ stan wentylatora
