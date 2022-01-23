@@ -570,9 +570,9 @@ void AnimateRainbowSyncAll() {
 
 //Początek animacji AnimateDisappeLed
 uint32_t DisappeNewPixelPreviousTime = 0;  //mills wcześniejszy
-uint16_t DisappeNewPixelDelayTime = 1200; //Co ile dodawać nowego leda i usuwać starego
+uint16_t DisappeNewPixelDelayTime = 500; //Co ile dodawać nowego leda i usuwać starego
 uint32_t DisappePreviousTime = 0;  //mills wcześniejszy
-uint16_t DisappeDelayTime = 200; //Co ile ściemniać i rozjaśniać
+uint16_t DisappeDelayTime = 90; //Co ile ściemniać i rozjaśniać
 uint16_t DisappeLedColorStatic = 0;
 
 uint16_t DisappeColorArray[36];   //Kolor danego leda
@@ -582,7 +582,7 @@ uint8_t DisappeColorBrightMaxValue = 239; //Maksymalna jasność leda.
 uint8_t DisappeLedStrip[36];      //Który led
 uint8_t DisappeLedInStrip[36];    //Który pasek
 
-uint8_t DisappeLedActive = 30;      //Liczba diod w animacji, można zmieniać kodem html
+uint8_t DisappeLedActive = 35;      //Liczba diod w animacji, można zmieniać kodem html
 uint8_t DisappeLedActiveCount = 0;  //Licznik o którego leda chodzi w danej chwili
 uint8_t DisappeColorRandom = 1;   //Czy kolor ledów losowany, czy ustalony z góry
 
@@ -628,7 +628,7 @@ void AnimateDisappeLed() {
 
   }else
 
-  if ((millis() - DisappePreviousTime) > DisappeDelayTime) {  //wykonuj co 200ms.
+  if ((millis() - DisappePreviousTime) > DisappeDelayTime) {  //wykonuj co 90ms.
     DisappePreviousTime = millis();
     
     for (uint8_t i = 0; i <= DisappeLedActive; i++){
@@ -637,7 +637,7 @@ void AnimateDisappeLed() {
       }
 
       if (DisappeColorBrightDirection[i]==0) { //Dodawanie lub odejmowanie jasności leda
-        if (DisappeColorBrightArray[i] < 40) {  //Jeden led będzie świecił 17500ms = (250ms*50+250ms*20); Max świecenie to 36000.
+        if (DisappeColorBrightArray[i] < 40) {  //Jeden led będzie świecił 5400ms = (90ms*40+90ms*20); Max świecenie to 36000.
           DisappeColorBrightArray[i] += 1;
         }else {
           DisappeColorBrightArray[i] += 10;
@@ -807,17 +807,17 @@ void Can_reader() //Odbieranie danych z Cana
           case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //default 255 //jasność animacji 2
             break;
           //animacja 3
-          case 30: DisappeLedActive = rx_frame.data.u8[1];   //default 30 //ilość led w animacji 3
+          case 30: DisappeLedActive = rx_frame.data.u8[1];   //default 35 //ilość led w animacji 3
             break;
-          case 31: DisappeNewPixelDelayTime = rx_frame.data.u8[1]*100;   //default 10*100=1000ms //Czas co ile dodawać nową diodę
+          case 31: DisappeNewPixelDelayTime = rx_frame.data.u8[1]*100;   //default 5*100=500ms //Czas co ile dodawać nową diodę
             break;
-          case 32: DisappeDelayTime = rx_frame.data.u8[1]*10;   //default 25*10=250ms //Czas co ile aktualizować jasność diody
+          case 32: DisappeDelayTime = rx_frame.data.u8[1]*10;   //default 9*10=90ms //Czas co ile aktualizować jasność diody
             break;
           case 33: DisappeColorBrightMaxValue = rx_frame.data.u8[1];   //default 249 //Jasność max animacji 3
             break;
-          case 34: DisappeColorRandom = rx_frame.data.u8[1];   //def 1 //Czy kolor animacji 3 ma być losowany? Jeśli nie to kurwa co? 0
+          case 34: DisappeColorRandom = rx_frame.data.u8[1];   //def 1 //Czy kolor animacji 3 ma być losowany? Jeśli nie to 0
             break;
-          case 35: DisappeLedColorStatic = rx_frame.data.u8[1] * 255; //Ustawianie koloru statycznego
+          case 35: DisappeLedColorStatic = rx_frame.data.u8[1] * 255; //Ustawianie koloru statycznego hsv
             break;
            //animacja 4
         }
