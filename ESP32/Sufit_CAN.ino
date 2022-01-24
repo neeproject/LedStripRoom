@@ -465,7 +465,7 @@ void KolorowanieTasmHSVWzorkiStone(uint32_t ColorFillHSV, uint16_t FirstLedHSV, 
 
 void KolorowanieTasmHSVWzorkiSilver(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
-  case 50:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz.
+  case 50:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz od środka
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 43);
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 44);
     break;
@@ -662,33 +662,39 @@ void AnimateDisappeLed() {
 
 
 //Początek animacji Ambilight \/ \/ \/
-uint32_t AmbilightTVArrayRGB[98];
+uint32_t AmbilightTVArrayRGB[5];
 uint8_t AmbilightUpdateCountLed = 0;
 
 void AmbilightTV(uint8_t NrLedAmbi, uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {
 
   AmbilightTVArrayRGB[NrLedAmbi] = lsu1.Color(ColorR, ColorG, ColorB);
 
-  if (NrLedAmbi == 97 && AmbilightUpdateCountLed > 96){
-      AmbilightUpdateCountLed = 0;
-
-      for (uint8_t i = 0; i < 98; i++) {
-        uint8_t ii = 97 - i;
-        lsu1.setPixelColor(10 + ii, AmbilightTVArrayRGB[i]);
-        lsu2.setPixelColor(10 + ii, AmbilightTVArrayRGB[i]);
-      }
-
-      lsu1.show();
-      lsu2.show();
-  }else
-    //if ERROR , brak odbieranych danych
-  if (AmbilightUpdateCountLed > 250) {
+  if (NrLedAmbi == 4 && AmbilightUpdateCountLed > 3) {
     AmbilightUpdateCountLed = 0;
+
+    //Długie taśmy
+    for (uint8_t i = 0; i < 5; i++) {
+      KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[i], i * 24, 24, 32);
+    }   //0-23//24-47//48-71//72-96//96-119
+    //Średnie
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[0], 0, 21, 33);   //0-20  =21
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[1], 21, 21, 33);  //21-41
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[2], 42, 20, 33);  //42-61
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[3], 62, 21, 33);  //62-82
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[4], 83, 21, 33);  //83-103
+    //Krótkie taśmy
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[0], 0, 17, 34); //0-16 = 17
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[1], 17, 18, 34); //17-34
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[2], 35, 18, 34);  //35-52
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[3], 53, 18, 34);  //53-70
+    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[4], 71, 17, 34);  //71-87
+
+  }
+    //if ERROR , brak odbieranych danych
+  if (AmbilightUpdateCountLed > 15) {
     KolorowanieDwochLedow(200, 0, 0, 0, 20);
   }
-  else if(NrLedAmbi != 97){
-    AmbilightUpdateCountLed++;
-  }
+  AmbilightUpdateCountLed++;
 }
 
 
@@ -847,12 +853,30 @@ void Can_reader() //Odbieranie danych z Cana
       KolorowanieTasmHSV(ButtonColor, 0, 1, 12);
       KolorowanieTasmHSV(ButtonColor, 0, 2, 12);
     }
-    if (rx_frame.MsgID == 0x020) {	//AmbilightTV
+
+    //AmbilightTV
+    if (rx_frame.MsgID == 0x020) {	
       if (ModeAnimation==20) {
         AmbilightTV(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2], rx_frame.data.u8[3]); //Nr_leda + RGB
       }
     }
 
+    //AmbilightTV om off
+    if (rx_frame.MsgID == 0x021) {	
+
+      switch(rx_frame.data.u8[0]){
+      case 0:
+        ModeAnimation = 0;  //wylaczyc ambilight
+        break;
+      case 1:
+        ModeAnimation = 20; //wlaczyc funkcje ambilight
+        break;
+      case 2:
+        ModeAnimation = 21; //zrobic inny styl
+        break;
+      }
+    }
+    
     //Music (25=Sufit / 26=Fan / 27=Karnisz / 28=Bed / 29=Grzejnik / 30=Szafa / 31=Szafka
     if ((rx_frame.MsgID > 0x029) && (rx_frame.MsgID < 0x040)) {
       if (ModeAnimation == 25) {
