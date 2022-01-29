@@ -37,7 +37,9 @@ DeviceAddress sentempid2 = { 0x28, 0x9E, 0xD8, 0x75, 0xD0, 0x01, 0x3C, 0x35 };
 
 //Zmienne globalne
 
-
+uint8_t ModeAnimation = 0;
+uint32_t PreviousTimeAnimation = 0;
+uint16_t DelayTimeAnimation = 20;
 
 //==================================================================================\/
 //=====================================GOTOWE=KOLORY================================\/
@@ -402,15 +404,15 @@ void KolorowanieTasmHSVWzorkiWood(uint32_t ColorFillHSV, uint16_t FirstLedHSV, u
 
 void KolorowanieTasmHSVWzorkiStone(uint32_t ColorFillHSV, uint16_t FirstLedHSV, uint16_t CountLedHSV, uint8_t NrLedStrip) {
   switch (NrLedStrip) {
-  case 40:    //    HOO [] OOH  //Na dwóch paskach po przeciwnej stronie na raz.
+  case 40:    //    %OO [] OO%  //Na dwóch paskach po przeciwnej stronie na raz z odbiciem.
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 20);
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 25);
     break;
-  case 41:    //    OHO [] OHO
+  case 41:    //    O%O [] O%O
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 21);
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 24);
     break;
-  case 42:    //    OOH [] HOO
+  case 42:    //    OO% [] %OO
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 22);
     KolorowanieTasmHSVWzorkiWood(ColorFillHSV, FirstLedHSV, CountLedHSV, 23);
     break;
@@ -672,23 +674,44 @@ void AmbilightTV(uint8_t NrLedAmbi, uint8_t ColorR, uint8_t ColorG, uint8_t Colo
   if (NrLedAmbi == 4 && AmbilightUpdateCountLed > 3) {
     AmbilightUpdateCountLed = 0;
 
-    //Długie taśmy
-    for (uint8_t i = 0; i < 5; i++) {
-      KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[i], i * 24, 24, 32);
-    }   //0-23//24-47//48-71//72-96//96-119
-    //Średnie
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[0], 0, 21, 33);   //0-20  =21
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[1], 21, 21, 33);  //21-41
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[2], 42, 20, 33);  //42-61
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[3], 62, 21, 33);  //62-82
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[4], 83, 21, 33);  //83-103
-    //Krótkie taśmy
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[0], 0, 17, 34); //0-16 = 17
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[1], 17, 18, 34); //17-34
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[2], 35, 18, 34);  //35-52
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[3], 53, 18, 34);  //53-70
-    KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[4], 71, 17, 34);  //71-87
-
+    switch (ModeAnimation) {
+      case 20:
+        //Długie taśmy
+        for (uint8_t i = 0; i < 5; i++) {
+          KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[i], i * 24, 24, 32);
+        }   //0-23//24-47//48-71//72-96//96-119
+        //Średnie
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[0], 0, 21, 33);   //0-20  =21
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[1], 21, 21, 33);  //21-41
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[2], 42, 20, 33);  //42-61
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[3], 62, 21, 33);  //62-82
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[4], 83, 21, 33);  //83-103
+        //Krótkie taśmy
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[0], 0, 17, 34); //0-16 = 17
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[1], 17, 18, 34); //17-34
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[2], 35, 18, 34);  //35-52
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[3], 53, 18, 34);  //53-70
+        KolorowanieTasmHSVWzorkiWood(AmbilightTVArrayRGB[4], 71, 17, 34);  //71-87
+        break;
+      case 21:
+        //Długie taśmy
+        for (uint8_t i = 0; i < 5; i++) {
+          KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[i], i * 24, 24, 0);
+        }   //0-23//24-47//48-71//72-96//96-119
+        //Średnie
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[0], 0, 21, 1);   //0-20  =21
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[1], 21, 21, 1);  //21-41
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[2], 42, 20, 1);  //42-61
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[3], 62, 21, 1);  //62-82
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[4], 83, 21, 1);  //83-103
+        //Krótkie taśmy
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[0], 0, 17, 2); //0-16 = 17
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[1], 17, 18, 2); //17-34
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[2], 35, 18, 2);  //35-52
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[3], 53, 18, 2);  //53-70
+        KolorowanieTasmHSVDualLed(AmbilightTVArrayRGB[4], 71, 17, 2);  //71-87
+        break;
+    }
   }
     //if ERROR , brak odbieranych danych
   if (AmbilightUpdateCountLed > 15) {
@@ -757,9 +780,6 @@ void KolorujLedOdAdoZ(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t Nr
 
 //==================================================================================\/
 
-uint8_t ModeAnimation = 0;
-uint32_t PreviousTimeAnimation = 0;
-uint16_t DelayTimeAnimation = 20;
 
 void HeadVoidAnimation() {
   if ((millis() - PreviousTimeAnimation) > DelayTimeAnimation) {
@@ -856,13 +876,13 @@ void Can_reader() //Odbieranie danych z Cana
 
     //AmbilightTV
     if (rx_frame.MsgID == 0x020) {	
-      if (ModeAnimation==20) {
+      if (ModeAnimation==20 || ModeAnimation == 21) {
         AmbilightTV(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2], rx_frame.data.u8[3]); //Nr_leda + RGB
       }
     }
 
     //AmbilightTV om off
-    if (rx_frame.MsgID == 0x021) {	
+    if (rx_frame.MsgID == 0x021 || rx_frame.MsgID == 0x022) { //21 dla samego sufitu, 22 dla sufitu i szafki
 
       switch(rx_frame.data.u8[0]){
       case 0:
@@ -874,11 +894,20 @@ void Can_reader() //Odbieranie danych z Cana
       case 2:
         ModeAnimation = 21; //zrobic inny styl
         break;
+      case 3:
+        ModeAnimation = 1; //zrobic inny styl - Smooth
+        break;
+      case 4:
+        ModeAnimation = 2; //zrobic inny styl - Rainbow
+        break;
+      case 5:
+        ModeAnimation = 3; //zrobic inny styl - Disapled
+        break;
       }
     }
     
     //Music (25=Sufit / 26=Fan / 27=Karnisz / 28=Bed / 29=Grzejnik / 30=Szafa / 31=Szafka
-    if ((rx_frame.MsgID > 0x029) && (rx_frame.MsgID < 0x040)) {
+    if ((rx_frame.MsgID > 0x059) && (rx_frame.MsgID < 0x070)) {
       if (ModeAnimation == 25) {
         Music(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2]); //Animate, Volume, Color 
       }

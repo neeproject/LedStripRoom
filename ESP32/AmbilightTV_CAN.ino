@@ -10,7 +10,7 @@
 
 Adafruit_NeoPixel ledontv(NUM_LEDS, 12, NEO_GRB + NEO_KHZ800); //ledontv/pin=9/type
 Adafruit_NeoPixel  ledcupboard(150, 13, NEO_GRB + NEO_KHZ800); //ledoncupboard/pin/type
-//Adafruit_NeoPixel    ledheater(100, 14, NEO_GRB + NEO_KHZ800); //ledongrzejnik/pin/type
+Adafruit_NeoPixel    ledheater(56, 14, NEO_GRB + NEO_KHZ800); //ledongrzejnik/pin/type
 
 //CAN
 CAN_device_t CAN_cfg;
@@ -25,9 +25,11 @@ unsigned long last_serial_available = -1L;  //Odlczanie czasu wycieczki
 uint32_t colorledinnow[NUM_LEDS];	//Kolory ledów odczytanych z seriala
 
 
-uint8_t sendoncan = 1;		//Czy wysy³aæ dane po CAN?
-uint8_t sendondownled = 1;	//Czy podœwietlaæ dó³ szafki ambilight?
+uint8_t ActualMode = 0; //Whatismode aktualnie?
 
+uint8_t sendoncan = 1;		//Czy wysy³aæ dane po CAN?
+uint8_t sendoncupled = 1;	//Czy podœwietlaæ dó³ szafki ambilight?
+uint8_t sendonheatled = 1;  //Czy wysy³aæ dane pod grzejnik?
 
 //Sprawdzanie które ledy aktualizowaæ
 uint8_t ListUpdateLedStrip[3] = { 0,0,0 };  //TV //Szafka //Grzejnik
@@ -72,7 +74,7 @@ void ModeBlack() {
     ledheater.clear();
   }
   if (Serial.available() > 0){  //Jesli zaczn¹ lecieæ dane z seriala, w³¹cz ambilight
-    ActualMode = 1; //Ustaw ModeAmbilight
+    ActualMode = 20; //Ustaw ModeAmbilight
   }
 }
 
@@ -92,8 +94,9 @@ void WyslijCanAmbilight(uint8_t NrLedinStrip, uint8_t ColorR, uint8_t ColorG, ui
 }
 
 //Pakowanie kolorków z Ambilight na sufit
-uint8_t AmbiCANarrayRGB[5][3];
-void PakowankoColorsOnArraySufitu(uint8_t ledNum, uint8_t ReadBlue, uint8_t ReadGreen, uint8_t ReadRed) {
+uint8_t AmbiCANarrayRGB[5][3];  //sufit
+
+void PakowankoColorsOnArraySufitu(uint8_t ledNum, uint8_t ReadRed, uint8_t ReadGreen, uint8_t ReadBlue) {
   if (ledNum == 64) {  //Wczeœniej 54< X <153
     AmbiCANarrayRGB[4][0] = ReadRed;
     AmbiCANarrayRGB[4][1] = ReadGreen;
@@ -165,15 +168,24 @@ void ModeAmbilight()	// Mode Ambilight
             ledontv.setPixelColor(ledNum, colorledinnow[ledNum]);	//zapalanie led z array, setpixel chyba szybsze bêdzie
 
             //Czy wysy³aæ dane do leda na dole szafki?
-            if (sendondownled && (ledNum > 207) && (ledNum <= NUM_LEDS)) {	//if is numer leda w przedziale 207-305
+            if (sendoncupled && (ledNum > 208) && (ledNum <= NUM_LEDS)) {	//if is numer leda w przedziale 207-305
               int ledCupNum = ledNum - 182;   //22 diody po prawej + 22 diody po lewej, a z przodu szafki jest 106 diod.
               ledcupboard.setPixelColor(ledCupNum, colorledinnow[ledNum]);
             }
           }
 
+          if (sendonheatled) {
+            for (uint8_t i = 0; i < 19; i++) {
+              ledheater.setPixelColor(i, colorledinnow[200]);
+              ledheater.setPixelColor(i+19, colorledinnow[205]);
+              ledheater.setPixelColor(i+18, colorledinnow[210]);
+            }
+            ledheater.show();
+          }
+
           ledontv.show();
 
-          if (sendondownled) {
+          if (sendoncupled) {
             ledcupboard.show();
           }
         }
@@ -184,20 +196,110 @@ void ModeAmbilight()	// Mode Ambilight
 
 
 //Animacje
-void ModeAnimation() {
+//Animacje
+//Animacje
 
+
+//Pocz¹tek animacji Smooth
+uint16_t SmoothColorHSV = 0;    //0-65535 = kolor HSV
+uint16_t SmoothJumpHSV = 10;  //Przeskok koloru HSV
+uint8_t SmoothBrightHSV = 255;        //jasnoœæ HSV
+
+void AnimateSmoothAll() {
+  SmoothColorHSV += (SmoothJumpHSV * 10);
+  uint32_t ChangeColorSmoothHSV = ledontv.ColorHSV(SmoothColorHSV, 255, SmoothBrightHSV);  //przeskok koloru,nasycenie,jasnoœæ
+  for (uint8_t i = 0; i < 3; i++) {
+    LedFillColor(ChangeColorSmoothHSV, 0, 0, i);
+  }
+}
+
+
+void KolorujJedenPasek(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip) {
+  uint32_t KolorujWszystkieTasmyRGB = ledontv.Color(ColorR, ColorG, ColorB);
+  LedFillColor(KolorujWszystkieTasmyRGB, 0, 0, NrLedStrip);
+}
+
+void KolorujWszystkieTasmy(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {
+  uint32_t KolorujWszystkieTasmyRGB = ledontv.Color(ColorR, ColorG, ColorB);
+  for (uint8_t i = 0; i < 3; i++) {
+    LedFillColor(KolorujWszystkieTasmyRGB, 0, 0, i);
+  }
 }
 
 
 
+//Pocz¹tek animacji Rainbow
+uint16_t RainbowColorStartAllHSV = 0;    //0-65535 = kolor HSV
+uint16_t RainbowJumpAllHSV = 10;  //To wp³ynie na prêdkoœæ przejœcia kolorów
+uint16_t RainbowJumpOneHSV = 100;  //Wiêksza wartoœæ to wiêcej kolorów na taœmach
+uint8_t RainbowBrightAllHSV = 255;        //jasnoœæ HSV
+
+void AnimateRainbow(uint16_t StartColorRainbowHSV, uint8_t RainbowBrightHSV, uint8_t NrLedStrip) {
+  switch (NrLedStrip) {
+  case 0: //TV
+    for (uint8_t i = 0; i < 208; i++) {
+      uint32_t Color32Rainbow = ledontv.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), 255, RainbowBrightHSV);
+      LedFillColor(Color32Rainbow, i, 1, 0);
+    }
+    break;
+  case 1: //CUP
+    for (uint8_t i = 0; i < 150; i++) {
+      uint32_t Color32Rainbow = ledcupboard.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), 255, RainbowBrightHSV);
+      LedFillColor(Color32Rainbow, i, 1, 1);
+    }
+    break;
+  case 2: //HEAT
+    for (uint8_t i = 0; i < 88; i++) {
+      uint32_t Color32Rainbow = ledontv.ColorHSV(StartColorRainbowHSV + (RainbowJumpOneHSV * i), 255, RainbowBrightHSV);
+      LedFillColor(Color32Rainbow, i, 1, 2);
+    }
+    break;
+  }
+}
+
+void AnimateRainbowSyncAll() {
+
+  AnimateRainbow(RainbowColorStartAllHSV, RainbowBrightAllHSV, 0);
+  AnimateRainbow(RainbowColorStartAllHSV + (181 * RainbowJumpOneHSV), RainbowBrightAllHSV, 1);
+  AnimateRainbow(RainbowColorStartAllHSV + (208 * RainbowJumpOneHSV), RainbowBrightAllHSV, 2);
+
+  RainbowColorStartAllHSV += RainbowJumpAllHSV;
+}
+
+
+
+uint32_t PreviousTimeAnimation = 0;
+uint16_t DelayTimeAnimation = 20;
+
+void HeadVoidAnimation() {
+  if ((millis() - PreviousTimeAnimation) > DelayTimeAnimation) {
+    PreviousTimeAnimation = millis();
+
+    switch (ActualMode) {
+    case 1: AnimateSmoothAll();
+      break;
+    case 2: AnimateRainbowSyncAll();
+      break;
+    }
+  }
+
+  //Animacje z delay w void 
+  switch (ActualMode) {
+  case 3: //AnimateDisappeLed();
+    break;
+  }
+
+}
+
+
 //Whatismode aktualnie?
-uint8_t ActualMode = 0;
 
 void WhatisMode() {
   switch (ActualMode) {
     case 0: ModeBlack();     break;   //Dorobiæ ³adn¹ animacje w³¹czaj¹ca blacka
-    case 1: ModeAmbilight(); break;   //Ambilight na co? TV, Szafka, Grzejnik, Sufit?
-    case 2: ModeAnimation(); break;   //Animacje na co? to samo ^
+    case 1: case 2: case 3:
+      HeadVoidAnimation(); break;
+    case 20: ModeAmbilight(); break;   //Ambilight na co? TV, Szafka, Grzejnik, Sufit?
   }
 }
 
@@ -224,6 +326,99 @@ bool waitForPreamble(int timeout)	//wykrywanie po³¹czenia Serial - Komputer
   return true;
 }
 
+
+void Can_reader() //Odbieranie danych z Cana
+{
+  CAN_frame_t rx_frame;
+  unsigned long cMillisInReadCan = millis();
+
+  if (xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3 * portTICK_PERIOD_MS) == pdTRUE) {
+
+    if (rx_frame.MsgID == 0x015) {	//Informacja tylko do szafki TV www kolory
+      switch (rx_frame.FIR.B.DLC) {   //Sprawdzanie d³ugoœci ci¹gu
+        case 3:
+          KolorujWszystkieTasmy(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2]);  //RGB
+          break;
+        case 4:
+          KolorujJedenPasek(rx_frame.data.u8[0], rx_frame.data.u8[1], rx_frame.data.u8[2], rx_frame.data.u8[3]); //RGB+Nr_Paska
+          break;
+      }
+    }
+
+    if (rx_frame.MsgID == 0x025) {	//Informacja tylko dla szafki TV RGB www - Animacje
+      switch (rx_frame.FIR.B.DLC) {   //Sprawdzanie d³ugoœci ci¹gu
+      case 2:
+        switch (rx_frame.data.u8[0]) {
+          case 0: ActualMode = rx_frame.data.u8[1];  //Typ animacji  //0 0 - wylaczenie  //0 1 =Animacja 1 //0 2=Animacja 2
+            break;
+          case 1: DelayTimeAnimation = rx_frame.data.u8[1]; //default 20 // Czas powtórzenia animacji 1, 2, gdzie g³ówny delay jest
+            break;
+            //animacja 1
+          case 10: SmoothJumpHSV = rx_frame.data.u8[1] * 5;   //default 10  //skok kolorów
+            break;
+          case 11: SmoothBrightHSV = rx_frame.data.u8[1]; //default 255 //jasnoœæ animacji 1
+            break;
+            //animacja 2
+          case 20: RainbowJumpAllHSV = rx_frame.data.u8[1] * 5;   //default 10  //predkosc przesuwania kolorów animacji 2
+            break;
+          case 21: RainbowJumpOneHSV = rx_frame.data.u8[1] * 5;   //default 100 //o ile jednostek wiêcej ma œwieciæ kolejny led animacji 2
+            break;
+          case 22: RainbowBrightAllHSV = rx_frame.data.u8[1]; //default 255 //jasnoœæ animacji 2
+            break;
+            //animacja 3
+            /*
+          case 30: DisappeLedActive = rx_frame.data.u8[1];   //default 35 //iloœæ led w animacji 3
+            break;
+          case 31: DisappeNewPixelDelayTime = rx_frame.data.u8[1] * 100;   //default 5*100=500ms //Czas co ile dodawaæ now¹ diodê
+            break;
+          case 32: DisappeDelayTime = rx_frame.data.u8[1] * 10;   //default 9*10=90ms //Czas co ile aktualizowaæ jasnoœæ diody
+            break;
+          case 33: DisappeColorBrightMaxValue = rx_frame.data.u8[1];   //default 249 //Jasnoœæ max animacji 3
+            break;
+          case 34: DisappeColorRandom = rx_frame.data.u8[1];   //def 1 //Czy kolor animacji 3 ma byæ losowany? Jeœli nie to 0
+            break;
+          case 35: DisappeLedColorStatic = rx_frame.data.u8[1] * 255; //Ustawianie koloru statycznego hsv
+            break;*/
+            //animacja 4
+
+          case 50: sendoncan = rx_frame.data.u8[1]; //default 1 //Czy wysy³aæ dane z Ambilight przez CAN?
+            break;
+          case 51: sendoncupled = rx_frame.data.u8[1]; //default 1 //Czy wysy³aæ dane z Ambilight do szafki?
+            break;
+          case 52: sendonheatled = rx_frame.data.u8[1]; //default 1 //Czy wysy³aæ dane pod grzejnik?
+            break;
+        }
+      }
+    }
+
+    //AmbilightTV on off
+    if (rx_frame.MsgID == 0x022 || rx_frame.MsgID == 0x023) { //22 dla sufitu i tv szafki //23 dla samej szafki
+
+      switch (rx_frame.data.u8[0]) {
+      case 0:
+        ActualMode = 0;  //wylaczyc wszystko
+        break;
+      case 1:
+        ActualMode = 20; //wlaczyc ambilight
+        break;  //case 2 jest pominiety, bo jest tylko dla sufitu
+      case 3:
+        ActualMode = 1; //zrobic inny styl - Smooth
+        break;
+      case 4:
+        ActualMode = 2; //zrobic inny styl - Rainbow
+        break;
+      case 5:
+        ActualMode = 3; //zrobic inny styl - Disapled
+        break;
+      }
+    }
+
+
+  }
+
+}
+
+
 //Setup po prostu
 void setup()
 {
@@ -235,6 +430,7 @@ void setup()
 
   ledontv.begin();
   ledcupboard.begin();
+  ledheater.begin();
 
   Serial.begin(576000);
 }
@@ -242,7 +438,7 @@ void setup()
 //Loopek
 void loop()
 {
-  //wyzwalacz CANa zmieniaj¹cy mode
+  Can_reader(); //Odbieranie danych z Cana
   WhatisMode();
   WhichLedStripUpdate();  //Aktualizowanie ledów
 }

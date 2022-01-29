@@ -35,10 +35,35 @@ void KolorujCalySufit(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {  //RGB
   ESP32Can.CANWriteFrame(&tx_frame);
 }
 
-void KolorujJedenPasek(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip) { //RGB+Nr_Paska
+void KolorujJedenPasekSufitu(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip) { //RGB+Nr_Paska
   CAN_frame_t tx_frame;
   tx_frame.FIR.B.FF = CAN_frame_std;
   tx_frame.MsgID = 0x011;
+  tx_frame.FIR.B.DLC = 4;
+  tx_frame.data.u8[0] = ColorR;
+  tx_frame.data.u8[1] = ColorG;
+  tx_frame.data.u8[2] = ColorB;
+  tx_frame.data.u8[3] = NrLedStrip;
+  //delay(1);
+  ESP32Can.CANWriteFrame(&tx_frame);
+}
+
+void KolorujCaleSzafkiTV(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {  //RGB
+  CAN_frame_t tx_frame;
+  tx_frame.FIR.B.FF = CAN_frame_std;
+  tx_frame.MsgID = 0x015;
+  tx_frame.FIR.B.DLC = 3;
+  tx_frame.data.u8[0] = ColorR;
+  tx_frame.data.u8[1] = ColorG;
+  tx_frame.data.u8[2] = ColorB;
+  //delay(1);
+  ESP32Can.CANWriteFrame(&tx_frame);
+}
+
+void KolorujJedenPasekSzafki(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip) { //RGB+Nr_Paska
+  CAN_frame_t tx_frame;
+  tx_frame.FIR.B.FF = CAN_frame_std;
+  tx_frame.MsgID = 0x015;
   tx_frame.FIR.B.DLC = 4;
   tx_frame.data.u8[0] = ColorR;
   tx_frame.data.u8[1] = ColorG;
@@ -77,10 +102,21 @@ void KolorujLedOdAdoZ(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t Nr
   ESP32Can.CANWriteFrame(&tx_frame);
 }
 
-void HeadAnimation(uint8_t StyleAnimation, uint8_t ValueAnimation) {
+void HeadAnimationSufit(uint8_t StyleAnimation, uint8_t ValueAnimation) {
   CAN_frame_t tx_frame;
   tx_frame.FIR.B.FF = CAN_frame_std;
   tx_frame.MsgID = 0x010;
+  tx_frame.FIR.B.DLC = 2;
+  tx_frame.data.u8[0] = StyleAnimation;
+  tx_frame.data.u8[1] = ValueAnimation;
+  //delay(1);
+  ESP32Can.CANWriteFrame(&tx_frame);
+}
+
+void HeadAnimationTV(uint8_t StyleAnimation, uint8_t ValueAnimation) {
+  CAN_frame_t tx_frame;
+  tx_frame.FIR.B.FF = CAN_frame_std;
+  tx_frame.MsgID = 0x025;
   tx_frame.FIR.B.DLC = 2;
   tx_frame.data.u8[0] = StyleAnimation;
   tx_frame.data.u8[1] = ValueAnimation;
@@ -228,7 +264,7 @@ void loop() {
                     String greenString = header.substring(ledinfoG + 1, ledinfoB);
                     String blueString = header.substring(ledinfoB + 1, ledinfoC);
 
-                    KolorujJedenPasek(redString.toInt(), greenString.toInt(), blueString.toInt(), stringled.toInt()); //RGB+Nr_Paska
+                    KolorujJedenPasekSufitu(redString.toInt(), greenString.toInt(), blueString.toInt(), stringled.toInt()); //RGB+Nr_Paska
                   }
                   else
                     if (header.indexOf("GET /?lone=") >= 0) {
@@ -278,8 +314,50 @@ void loop() {
                           String StyleAnimation = header.substring(ledinfoS + 1, ledinfoW);
                           String ValueAnimation = header.substring(ledinfoW + 1, ledinfoC);
 
-                          HeadAnimation(StyleAnimation.toInt(), ValueAnimation.toInt());
+                          HeadAnimationSufit(StyleAnimation.toInt(), ValueAnimation.toInt());
                         }
+                        else
+                          if (header.indexOf("GET /?anit=") >= 0) {
+
+                            int ledinfoS = header.indexOf('s');
+                            int ledinfoW = header.indexOf('w');
+                            int ledinfoC = header.indexOf('&');
+
+                            String StyleAnimation = header.substring(ledinfoS + 1, ledinfoW);
+                            String ValueAnimation = header.substring(ledinfoW + 1, ledinfoC);
+
+                            HeadAnimationTV(StyleAnimation.toInt(), ValueAnimation.toInt());
+                          }
+                          else
+                            if (header.indexOf("GET /?tvall=") >= 0) {   //Ca³y sufit
+
+                              int ledinfoR = header.indexOf('r');
+                              int ledinfoG = header.indexOf('g');
+                              int ledinfoB = header.indexOf('b');
+                              int ledinfoC = header.indexOf('&');
+
+                              String redString = header.substring(ledinfoR + 1, ledinfoG);
+                              String greenString = header.substring(ledinfoG + 1, ledinfoB);
+                              String blueString = header.substring(ledinfoB + 1, ledinfoC);
+
+                              KolorujCaleSzafkiTV(redString.toInt(), greenString.toInt(), blueString.toInt());
+                            }
+                            else
+                              if (header.indexOf("GET /?tvone=") >= 0) {    //Jeden ca³y pasek
+
+                                int ledinfoS = header.indexOf('s');
+                                int ledinfoR = header.indexOf('r');
+                                int ledinfoG = header.indexOf('g');
+                                int ledinfoB = header.indexOf('b');
+                                int ledinfoC = header.indexOf('&');
+
+                                String stringled = header.substring(ledinfoS + 1, ledinfoR);
+                                String redString = header.substring(ledinfoR + 1, ledinfoG);
+                                String greenString = header.substring(ledinfoG + 1, ledinfoB);
+                                String blueString = header.substring(ledinfoB + 1, ledinfoC);
+
+                                KolorujJedenPasekSzafki(redString.toInt(), greenString.toInt(), blueString.toInt(), stringled.toInt()); //RGB+Nr_Paska
+                              }
           break;
           }else {
             currentLine = "";
@@ -304,9 +382,9 @@ void LightButton() {  //W³¹cznik œwiat³a w pokoju
       KolorujWlacznik(0,10);
     }
 
-    if ((millis() - HoldTimeButton[0]) == 2000) {  //Czy by³ trzymany wiêcej ni¿ 2000ms?
+    if ((millis() - HoldTimeButton[0]) == 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
       KolorujWlacznik(213, 10);
-    }else if ((millis() - HoldTimeButton[0]) == 1000) {  //Czy by³ trzymany wiêcej ni¿ 1000ms?
+    }else if ((millis() - HoldTimeButton[0]) == 700) {  //Czy by³ trzymany wiêcej ni¿ 700ms?
       KolorujWlacznik(170, 10);
     }
   }
@@ -314,11 +392,11 @@ void LightButton() {  //W³¹cznik œwiat³a w pokoju
     if (digitalRead(39) == 0) {   //Czy przycisk jest ju¿ puszczony?
       HoldStateButton[0] = 0;     //Zaznacz ¿e jest ju¿ puszczony
       KolorujWlacznik(0, 0);
-      if ((millis() - HoldTimeButton[0]) > 2000) {  //Czy by³ trzymany wiêcej ni¿ 2000ms?
+      if ((millis() - HoldTimeButton[0]) > 1200) {  //Czy by³ trzymany wiêcej ni¿ 1200ms?
         KolorujCalySufit(0, 0, 0);
       }
       else
-        if ((millis() - HoldTimeButton[0]) > 1000) {  //Czy by³ trzymany wiêcej ni¿ 1000ms?
+        if ((millis() - HoldTimeButton[0]) > 700) {  //Czy by³ trzymany wiêcej ni¿ 700ms?
           if (headwentinroom == 0) { headwentinroom = 1; }  //Zmieñ stan wentylatora
           else
             if (headwentinroom == 1) { headwentinroom = 0; }  //Zmieñ stan wentylatora
