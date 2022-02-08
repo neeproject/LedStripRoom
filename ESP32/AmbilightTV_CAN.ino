@@ -2,7 +2,7 @@
 #include <ESP32CAN.h>
 #include <CAN_config.h>
 
-#include <cstdint>  //Potem usun¹æ, potrzebne tylko do VS, aby podœwietlaæ inty.
+#include <cstdint>
 
 
 #define NUM_LEDS 306	//iloœæ diod na tv licz¹c z dolnym paskiem dolnym któego nie ma
@@ -10,7 +10,7 @@
 
 Adafruit_NeoPixel ledontv(NUM_LEDS, 12, NEO_GRB + NEO_KHZ800); //ledontv/pin=9/type
 Adafruit_NeoPixel  ledcupboard(150, 13, NEO_GRB + NEO_KHZ800); //ledoncupboard/pin/type
-Adafruit_NeoPixel    ledheater(56, 14, NEO_GRB + NEO_KHZ800); //ledongrzejnik/pin/type
+Adafruit_NeoPixel    ledheater(59, 14, NEO_GRB + NEO_KHZ800); //ledongrzejnik/pin/type
 
 //CAN
 CAN_device_t CAN_cfg;
@@ -69,15 +69,41 @@ uint16_t ModeBlackDelayTime = 65000; //co ile wykonywaæ black moda 65 sekund
 void ModeBlack() {
   if ((millis() - ModeBlackPreviousTime) > ModeBlackDelayTime) {  //wykonuj co 1200ms.
     ModeBlackPreviousTime = millis();
-    ledontv.clear();
-    ledcupboard.clear();
-    ledheater.clear();
+    LedFillColor(0, 0, 0, 0);
+    LedFillColor(0, 0, 0, 1);
+    LedFillColor(0, 0, 0, 2);
   }
   if (Serial.available() > 0){  //Jesli zaczn¹ lecieæ dane z seriala, w³¹cz ambilight
     ActualMode = 20; //Ustaw ModeAmbilight
   }
 }
 
+uint8_t BlackModeIncommingBright = 0;
+uint32_t BlackModeIncommingTime = 0;
+uint16_t BlackModeIncommingTimeDelay = 50;
+bool BlackModeIncommingArrow = 0;
+
+void BlackModeIncomming() {
+  if ((millis() - BlackModeIncommingTime) > BlackModeIncommingTimeDelay) {
+    BlackModeIncommingTime = millis();
+
+    if (BlackModeIncommingArrow == 0) {
+      BlackModeIncommingBright++;
+      if (BlackModeIncommingBright == 100) { BlackModeIncommingArrow = 1; }
+    }
+    else {
+      BlackModeIncommingBright--;
+      if (BlackModeIncommingBright == 0) {
+        ActualMode = 0; //Ustaw BlackMode
+        BlackModeIncommingArrow = 0;
+      }
+    }
+    uint32_t BlackModeIncommingColor = ledontv.ColorHSV(0, 255, BlackModeIncommingBright);  //przeskok koloru,nasycenie,jasnoœæ
+    for (uint8_t i = 0; i < 3; i++) {
+      LedFillColor(BlackModeIncommingColor, 0, 0, i);
+    }
+  }
+}
 
 //Can Send Ambilight Color
 void WyslijCanAmbilight(uint8_t NrLedinStrip, uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) { //RGB+Nr_Paska
@@ -175,10 +201,10 @@ void ModeAmbilight()	// Mode Ambilight
           }
 
           if (sendonheatled) {
-            for (uint8_t i = 0; i < 19; i++) {
-              ledheater.setPixelColor(i, colorledinnow[200]);
-              ledheater.setPixelColor(i+19, colorledinnow[205]);
-              ledheater.setPixelColor(i+18, colorledinnow[210]);
+            for (uint8_t i = 0; i < 20; i++) {
+              ledheater.setPixelColor(i, colorledinnow[200]); //0-19
+              ledheater.setPixelColor(i+20, colorledinnow[205]);  //20-39
+              ledheater.setPixelColor(i+40, colorledinnow[210]);  //40-59, ale jest 58.
             }
             ledheater.show();
           }
@@ -191,6 +217,9 @@ void ModeAmbilight()	// Mode Ambilight
         }
       }
     }
+  }
+  else {
+    ActualMode = 19;
   }
 }
 
@@ -299,6 +328,7 @@ void WhatisMode() {
     case 0: ModeBlack();     break;   //Dorobiæ ³adn¹ animacje w³¹czaj¹ca blacka
     case 1: case 2: case 3:
       HeadVoidAnimation(); break;
+    case 19: BlackModeIncomming(); break;
     case 20: ModeAmbilight(); break;   //Ambilight na co? TV, Szafka, Grzejnik, Sufit?
   }
 }
