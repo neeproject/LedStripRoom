@@ -329,7 +329,7 @@ void loop() {
                             HeadAnimationTV(StyleAnimation.toInt(), ValueAnimation.toInt());
                           }
                           else
-                            if (header.indexOf("GET /?tvall=") >= 0) {   //Ca³y sufit
+                            if (header.indexOf("GET /?tvall=") >= 0) {   //Wszystkie ledy od ESP z szafki
 
                               int ledinfoR = header.indexOf('r');
                               int ledinfoG = header.indexOf('g');
