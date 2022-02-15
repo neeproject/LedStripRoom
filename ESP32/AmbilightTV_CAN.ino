@@ -15,6 +15,7 @@ Adafruit_NeoPixel    ledheater(59, 14, NEO_GRB + NEO_KHZ800); //ledongrzejnik/pi
 Adafruit_NeoPixel    ledwardrobeon(284, 27, NEO_GRB + NEO_KHZ800); //led on wardrobe/pin/type
 Adafruit_NeoPixel    ledwardrobein(118, 26, NEO_GRB + NEO_KHZ800); //led in wardrobe/pin/type
 Adafruit_NeoPixel    ledwardrobetube(49, 25, NEO_GRB + NEO_KHZ800); //led in tube wardrobe/pin/type
+Adafruit_NeoPixel    ledondoor(171, 33, NEO_GRB + NEO_KHZ800); //led on door/pin/type
 
 //CAN
 CAN_device_t CAN_cfg;
@@ -35,9 +36,10 @@ uint8_t sendoncan = 1;		//Czy wysy³aæ dane po CAN?
 uint8_t sendoncupled = 1;	//Czy podœwietlaæ dó³ szafki ambilight?
 uint8_t sendonheatled = 0;  //Czy wysy³aæ dane pod grzejnik?
 uint8_t sendonwardrobe = 0;  //Czy wysy³aæ dane na szafe?
+uint8_t sendondoor = 0;  //Czy wysy³aæ dane na drzwi?
 
 //Sprawdzanie które ledy aktualizowaæ
-uint8_t ListUpdateLedStrip[6] = { 0,0,0,0,0,0 };  //TV //Szafka //Grzejnik
+uint8_t ListUpdateLedStrip[7] = { 0,0,0,0,0,0,0 };  //TV //Szafka //Grzejnik
 
 void LedStripShowUpdate(uint8_t NrLedStrip) {
   switch (NrLedStrip) {
@@ -45,12 +47,13 @@ void LedStripShowUpdate(uint8_t NrLedStrip) {
     case 1: ledcupboard.show(); break;
     case 2: ledheater.show();   break;
     case 3: ledwardrobeon.show();   break;
-    case 4: ledwardrobein.show();   break;
-    case 5: ledwardrobetube.show();   break;
+    case 4: ledondoor.show();       break;
+    case 5: ledwardrobein.show();   break;
+    case 6: ledwardrobetube.show(); break;
   }
 }
 void WhichLedStripUpdate() {
-  for (uint8_t i = 0; i < 6; i++) {
+  for (uint8_t i = 0; i < 7; i++) {
     if (ListUpdateLedStrip[i]) {
       LedStripShowUpdate(i);
       ListUpdateLedStrip[i] = 0;
@@ -66,8 +69,9 @@ void LedFillColor(uint32_t ColorFill, uint16_t FirstLed, uint16_t CountLed, uint
     case 1:   ledcupboard.fill(ColorFill, FirstLed, CountLed); break;
     case 2:   ledheater.fill(ColorFill, FirstLed, CountLed);   break;
     case 3:   ledwardrobeon.fill(ColorFill, FirstLed, CountLed);   break;
-    case 4:   ledwardrobein.fill(ColorFill, FirstLed, CountLed);   break;
-    case 5:   ledwardrobetube.fill(ColorFill, FirstLed, CountLed);   break;
+    case 4:   ledondoor.fill(ColorFill, FirstLed, CountLed);   break;
+    case 5:   ledwardrobein.fill(ColorFill, FirstLed, CountLed);   break;
+    case 6:   ledwardrobetube.fill(ColorFill, FirstLed, CountLed);   break;
   }
   ListUpdateLedStrip[NrLedStrip] = 1;
 }
@@ -84,6 +88,7 @@ void ModeBlack() {
     LedFillColor(0, 0, 0, 1);
     LedFillColor(0, 0, 0, 2);
     LedFillColor(0, 0, 0, 3);
+    LedFillColor(0, 0, 0, 4);
   }
   if (Serial.available() > 0){  //Jesli zaczn¹ lecieæ dane z seriala, w³¹cz ambilight
     ActualMode = 20; //Ustaw ModeAmbilight
@@ -205,6 +210,7 @@ void ModeAmbilight()	// Mode Ambilight
           {
             ledontv.setPixelColor(ledNum, colorledinnow[ledNum]);	//zapalanie led z array, setpixel chyba szybsze bêdzie
 
+            //Czy wysy³aæ dane na du¿¹ szafe?
             if (sendonwardrobe && (ledNum >= 0) && (ledNum <= 55)) {
               if (sendonwardrobe==1) {
                 for (uint8_t i = 0; i < 3; i++) {
@@ -214,6 +220,13 @@ void ModeAmbilight()	// Mode Ambilight
                 for (uint8_t i = 0; i < 5; i++) {
                   ledwardrobeon.setPixelColor(ledNum * 5 + i, colorledinnow[ledNum]); //tutaj ca³a prawie szafka
                 }
+              }
+            }
+
+            //Czy wysy³aæ dane ambilight na drzwi?
+            if (sendondoor && (ledNum >= 0) && (ledNum <= 55)) {
+              for (uint8_t i = 0; i < 3; i++) {
+                ledondoor.setPixelColor(ledNum * 3 + i, colorledinnow[ledNum]); //tutaj szafka
               }
             }
 
@@ -235,12 +248,17 @@ void ModeAmbilight()	// Mode Ambilight
           }
 
           ledontv.show();
+
           if (sendonwardrobe) {
             ledwardrobeon.show(); //du¿a szafa
           }
           if (sendoncupled) {
             ledcupboard.show(); //szafka pod tv
           }
+          if (sendondoor) {
+            ledondoor.show(); //drzwi
+          }
+
         }
       }
     }
@@ -264,7 +282,7 @@ uint8_t SmoothBrightHSV = 255;        //jasnoœæ HSV
 void AnimateSmoothAll() {
   SmoothColorHSV += (SmoothJumpHSV * 10);
   uint32_t ChangeColorSmoothHSV = ledontv.ColorHSV(SmoothColorHSV, 255, SmoothBrightHSV);  //przeskok koloru,nasycenie,jasnoœæ
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < 5; i++) {
     LedFillColor(ChangeColorSmoothHSV, 0, 0, i);
   }
 }
@@ -277,7 +295,7 @@ void KolorujJedenPasek(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t N
 
 void KolorujWszystkieTasmy(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB) {
   uint32_t KolorujWszystkieTasmyRGB = ledontv.Color(ColorR, ColorG, ColorB);
-  for (uint8_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < 5; i++) {
     LedFillColor(KolorujWszystkieTasmyRGB, 0, 0, i);
   }
 }
@@ -446,7 +464,8 @@ void Can_reader() //Odbieranie danych z Cana
             break;
           case 53: sendonwardrobe = rx_frame.data.u8[1]; //default 0 //Czy wysy³aæ dane na du¿¹ szafe?
             break;
-            
+          case 54: sendondoor = rx_frame.data.u8[1]; //default 0 //Czy wysy³aæ dane na drzwi?
+            break;
         }
       }
     }
