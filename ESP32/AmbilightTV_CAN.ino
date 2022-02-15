@@ -33,8 +33,8 @@ uint8_t ActualMode = 0; //Whatismode aktualnie?
 
 uint8_t sendoncan = 1;		//Czy wysy³aæ dane po CAN?
 uint8_t sendoncupled = 1;	//Czy podœwietlaæ dó³ szafki ambilight?
-uint8_t sendonheatled = 1;  //Czy wysy³aæ dane pod grzejnik?
-uint8_t sendonwardrobe = 1;  //Czy wysy³aæ dane na szafe?
+uint8_t sendonheatled = 0;  //Czy wysy³aæ dane pod grzejnik?
+uint8_t sendonwardrobe = 0;  //Czy wysy³aæ dane na szafe?
 
 //Sprawdzanie które ledy aktualizowaæ
 uint8_t ListUpdateLedStrip[6] = { 0,0,0,0,0,0 };  //TV //Szafka //Grzejnik
@@ -111,7 +111,7 @@ void BlackModeIncomming() {
       }
     }
     uint32_t BlackModeIncommingColor = ledontv.ColorHSV(0, 255, BlackModeIncommingBright);  //przeskok koloru,nasycenie,jasnoœæ
-    for (uint8_t i = 0; i < 3; i++) {
+    for (uint8_t i = 0; i < 4; i++) {
       LedFillColor(BlackModeIncommingColor, 0, 0, i);
     }
   }
@@ -204,10 +204,20 @@ void ModeAmbilight()	// Mode Ambilight
           for (int ledNum = 0; ledNum < NUM_LEDS; ledNum++) //Pêtla zapalaj¹ca ledy 
           {
             ledontv.setPixelColor(ledNum, colorledinnow[ledNum]);	//zapalanie led z array, setpixel chyba szybsze bêdzie
-            if (sendonwardrobe && (ledNum > 0) && (ledNum <= 98)) {
-              ledwardrobeon.setPixelColor(ledNum*2, colorledinnow[ledNum]); //tutaj szafka
-              ledwardrobeon.setPixelColor(ledNum+1, colorledinnow[ledNum]); //tutaj szafka
+
+            if (sendonwardrobe && (ledNum >= 0) && (ledNum <= 55)) {
+              if (sendonwardrobe==1) {
+                for (uint8_t i = 0; i < 3; i++) {
+                  ledwardrobeon.setPixelColor(ledNum * 3 + i, colorledinnow[ledNum]); //tutaj szafka
+                }
+              }else if (sendonwardrobe==2) {
+                for (uint8_t i = 0; i < 5; i++) {
+                  ledwardrobeon.setPixelColor(ledNum * 5 + i, colorledinnow[ledNum]); //tutaj ca³a prawie szafka
+                }
+              }
             }
+
+
             //Czy wysy³aæ dane do leda na dole szafki?
             if (sendoncupled && (ledNum > 208) && (ledNum <= NUM_LEDS)) {	//if is numer leda w przedziale 207-305
               int ledCupNum = ledNum - 182;   //22 diody po prawej + 22 diody po lewej, a z przodu szafki jest 106 diod.
@@ -436,6 +446,7 @@ void Can_reader() //Odbieranie danych z Cana
             break;
           case 53: sendonwardrobe = rx_frame.data.u8[1]; //default 0 //Czy wysy³aæ dane na du¿¹ szafe?
             break;
+            
         }
       }
     }
