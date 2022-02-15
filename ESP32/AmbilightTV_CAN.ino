@@ -116,8 +116,19 @@ void BlackModeIncomming() {
       }
     }
     uint32_t BlackModeIncommingColor = ledontv.ColorHSV(0, 255, BlackModeIncommingBright);  //przeskok koloru,nasycenie,jasnoœæ
-    for (uint8_t i = 0; i < 4; i++) {
-      LedFillColor(BlackModeIncommingColor, 0, 0, i);
+    LedFillColor(BlackModeIncommingColor, 0, 0, 0);
+
+    if (sendoncupled) {
+      LedFillColor(BlackModeIncommingColor, 0, 0, 1);
+    }
+    if (sendonheatled) {
+      LedFillColor(BlackModeIncommingColor, 0, 0, 2);
+    }
+    if (sendonwardrobe) {
+      LedFillColor(BlackModeIncommingColor, 0, 0, 3);
+    }
+    if(sendondoor) {
+      LedFillColor(BlackModeIncommingColor, 0, 0, 4);
     }
   }
 }
