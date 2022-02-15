@@ -224,7 +224,7 @@ void ModeAmbilight()	// Mode Ambilight
             }
 
             //Czy wysy³aæ dane ambilight na drzwi?
-            if (sendondoor && (ledNum >= 0) && (ledNum <= 55)) {
+            if (sendondoor && (ledNum >= 0) && (ledNum <= 56)) {
               for (uint8_t i = 0; i < 3; i++) {
                 ledondoor.setPixelColor(ledNum * 3 + i, colorledinnow[ledNum]); //tutaj szafka
               }
