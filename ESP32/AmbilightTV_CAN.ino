@@ -499,7 +499,7 @@ void Can_reader() //Odbieranie danych z Cana
             break;
           case 54: sendondoor = rx_frame.data.u8[1]; //default 0 //Czy wysy³aæ dane na drzwi?
             break;
-          case 55: sendonbed = rx_frame.data.u8[1]; //default 0 //Czy wysy³aæ dane na drzwi?
+          case 55: sendonbed = rx_frame.data.u8[1]; //default 0 //Czy wysy³aæ dane na bed?
             break;
         }
       }
