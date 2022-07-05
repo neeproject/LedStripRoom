@@ -31,3 +31,7 @@ Wykorzystane biblioteki:
 -ESP32CAN.h
 -CAN_config.h
 -Arduino.h
+
+![alt text](https://github.com/neeproject/LedStripRoom/blob/main/Photo/room_1.jpg)
+![alt text](https://github.com/neeproject/LedStripRoom/blob/main/Photo/room_2.jpg)
+![alt text](https://github.com/neeproject/LedStripRoom/blob/main/Photo/room_3.jpg)
