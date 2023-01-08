@@ -743,13 +743,13 @@ void KolorujCalySufit(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB){  //RGB
 
 void KolorujJedenPasek(uint8_t ColorR, uint8_t ColorG, uint8_t ColorB, uint8_t NrLedStrip){ //RGB+Nr_Paska
   switch(NrLedStrip){
-    case 0: case 5: case 6: case 7: case 16: case 17: case 20:    //if(NrLedStrip==(0||5||6||7||16||17||20)){ ????
+    case 0: case 5: case 6: case 7: case 16: case 17: case 26:    //if(NrLedStrip==(0||5||6||7||16||17||20)){ ????
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 119);
     break;
-    case 1: case 4: case 8: case 9: case 14: case 15: case 21:
+    case 1: case 4: case 8: case 9: case 14: case 15: case 27:
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 103);
     break;
-    case 2: case 3: case 10: case 11: case 12: case 13: case 22:
+    case 2: case 3: case 10: case 11: case 12: case 13: case 28:
       KolorujLedOdAdoZ(ColorR, ColorG, ColorB, NrLedStrip, 0, 87);
     break;
   }
